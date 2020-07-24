@@ -1,0 +1,19 @@
+.Topic{
+    display: flex;
+    background-color: blanchedalmond;
+    border: 1px solid;
+    margin: 0px 10px 0px 10px;
+    flex-direction: column;
+    max-width: 800px;
+}
+.TopicHeading{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* background-color: blue; */
+}
+.TopicInfo{
+    justify-content: center;
+    display: flex;
+    flex-flow : column-wrap;
+}

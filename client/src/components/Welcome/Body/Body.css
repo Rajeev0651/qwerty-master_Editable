@@ -1,0 +1,8 @@
+.body{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    border: 2px solid black;
+    box-shadow:3px 3px;
+    max-width : 500px
+}

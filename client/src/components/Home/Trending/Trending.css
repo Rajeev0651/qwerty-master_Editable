@@ -1,0 +1,11 @@
+.Trending{
+    margin: 0px 0px 0px 0px;
+    display: flex;
+    border: 1px solid;
+    background-color: aqua;
+    max-width: 300px;
+    flex-flow: column wrap
+}
+#show{
+    display: none;
+}
