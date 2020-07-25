@@ -43,11 +43,14 @@ const Login = () => {
     <div className="loginContainer">
       {route && <Redirect to={{ pathname: "/home" }} />}
       <div className="heading">
-        <h3>Login</h3>
+        <h3 style={{ marginRight: "25px" }}>Login</h3>
       </div>
       <div className="loginform">
         <form onSubmit={formik.handleSubmit}>
-          <div className="form-group col-10 mb-1">
+          <div
+            className="form-group col-10 mb-1"
+            style={{ marginLeft: "25px" }}
+          >
             <label htmlFor="email">Email</label>
             <input
               type="text"
@@ -62,7 +65,7 @@ const Login = () => {
               <div className="error">{formik.errors.loginemail}</div>
             ) : null}
           </div>
-          <div className="form-group col-10">
+          <div className="form-group col-10" style={{ marginLeft: "25px" }}>
             <label htmlFor="password">Password</label>
             <input
               className="form-control"

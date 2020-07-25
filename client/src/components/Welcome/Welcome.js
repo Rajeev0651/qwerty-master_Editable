@@ -7,7 +7,7 @@ import { Redirect } from "react-router-dom";
 const Welcome = () => {
   const [valid, SetValid] = useState(false);
   useEffect(() => {
-    fetch("https://localhost:3000/", {
+    fetch("https://localhost:5000/", {
       method: "GET",
       mode: "cors",
       credentials: "include",

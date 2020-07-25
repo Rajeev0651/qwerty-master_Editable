@@ -4,3 +4,37 @@
 .CreateTopic{
     display: flex;
 }
+.loginContainer{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-left: 0px;
+}
+.error{
+    color : rgb(95, 79, 79);
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+label{
+    line-height: 0rem;
+}
+textarea {
+    display: block;
+    position: absolute;
+    z-index: 5;
+    margin: 0;
+    border: 2px solid #74637f;
+    border-radius: 0;
+    color: #444;
+    background-color: transparent;
+    overflow: auto;
+    resize: none;
+    transition: transform 1s;
+  }
+  .container {
+    display: block;
+    margin: 0 auto;
+    transform: translateZ(0);
+    -webkit-text-size-adjust: none;
+  }
+  

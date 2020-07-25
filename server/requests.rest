@@ -1,3 +1,0 @@
-POST http://localhost:5000/signup
-mode:cors
-credentials: 'include'

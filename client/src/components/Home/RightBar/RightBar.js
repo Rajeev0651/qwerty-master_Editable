@@ -1,11 +1,15 @@
-import React from 'react'
-import './RightBar.css'
+import React from "react";
+import Image from "./adds.jpg";
+import "./RightBar.css";
 function RightBar() {
-    return (
-        <div className='RightBar'>
-            <h1>Right BarAAAAAA..</h1>
-        </div>
-    )
+  return (
+    <div className="RightBar card" style={{ width: "18rem" }}>
+      <img src={Image} height="40%" width="40%"></img>
+      <div className="card-body">
+        <p className="card-text">Advertisement</p>
+      </div>
+    </div>
+  );
 }
 
-export default RightBar
+export default RightBar;

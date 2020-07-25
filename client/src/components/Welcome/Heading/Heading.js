@@ -1,14 +1,28 @@
-import React from 'react'
-import './Heading.css'
+import React from "react";
+import "./Heading.css";
 const Heading = () => (
-    <div className='heading'>
-        <div className='logo'>
-            <p>Brand Logo(image)</p>
-        </div>
-        <div className='header'>
-            <h2>Brand Name<span><h4>some catchy tagLine</h4></span></h2>
-        </div>
-    </div>
-)
+  <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a className="navbar-brand">
+    StartUp 
+  </a>
+    <ul className="navbar-nav mr-auto">
+      <li className="nav-item active">
+        <a className="nav-link">
+          Home <span className="sr-only">(current)</span>
+        </a>
+      </li>
+      <li className="nav-item">
+        <a className="nav-link">
+          Features
+        </a>
+      </li>
+      <li className="nav-item">
+        <a className="nav-link">
+          Careers
+        </a>
+      </li>
+    </ul>
+    </nav>
+);
 
-export default Heading
+export default Heading;

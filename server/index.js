@@ -13,6 +13,7 @@ const loginRoute = require("./routers/login");
 const signupRoute = require("./routers/signup");
 const homeRoute = require("./routers/home");
 const logoutRoute = require("./routers/logout");
+const CreateTopic = require("./routers/CreateTopic");
 
 dotenv.config();
 const uri = process.env.ATLAS_URI;
@@ -37,6 +38,7 @@ app.use(homeRoute);
 app.use(loginRoute);
 app.use(signupRoute);
 app.use(logoutRoute);
+app.use(CreateTopic);
 const PORT = process.env.PORT || 5000;
 
 https.createServer(options, app).listen(PORT, () => {

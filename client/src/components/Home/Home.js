@@ -11,7 +11,6 @@ import Error404 from '../Error404/Error404'
 import './Home.css'
 import { Route, Switch, useRouteMatch, Redirect } from 'react-router-dom'
 
-
 const Home = () => {
     let match = useRouteMatch()
     const [valid, SetValid] = useState(true)
@@ -27,8 +26,11 @@ const Home = () => {
         <div>
         {valid === false ? <Redirect to={{pathname : '/'}}/>: null}
             <Header />
-            <div className='homeContainer'>
-                <Trending />
+            <div className='homeContainer'  className="container-fluid">
+                <div className="row content">
+                <div className="body container-fluid" className="col-sm-3">
+                <Trending /></div>
+                <div className="body container-fluid" className="col-sm-6">
                 <Switch>
                     <Route path={`${match.path}`} component={Feed} exact={true} />
                     <Route path={`${match.path}/notifications`} component={Notifications} />
@@ -36,8 +38,10 @@ const Home = () => {
                     <Route path={`${match.path}/profile`} component={Profile} />
                     <Route path={`${match.path}/createtopic`} component={CreateTopic} />
                     <Route component={Error404} />
-                </Switch>
-                <RightBar />
+                </Switch></div>
+                <div className="body container-fluid" className="col-sm-2">
+                <RightBar /></div>
+                </div>
             </div>
         </div>
     )

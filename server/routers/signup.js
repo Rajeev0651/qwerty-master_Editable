@@ -35,8 +35,6 @@ const addtoken = (token,userid) => {
       });
 }
 router.post('/signup',(req,res)=>{
-    res.set('Access-Control-Allow-Origin' ,"https://localhost:3000")
-    res.set('Access-Control-Allow-Credentials', 'true')
     user.find({email:req.body.email},(err,document)=>{
         if(err) console.log(err)
         if(document.length>0){
