@@ -1,8 +1,42 @@
 import React, { useState } from "react";
-import "./Signup.css";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
 import { useFormik } from "formik";
 import { Redirect } from "react-router-dom";
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+
 const Signup = () => {
+  const classes = useStyles();
   const [route, setRoute] = useState(false);
   const initialValues = {
     firstname: "",
@@ -54,108 +88,76 @@ const Signup = () => {
   });
 
   return (
-    <div className="signupContainer">
+    <React.Fragment>
       {route && <Redirect to={{ pathname: "/home" }} />}
-      <h3 align="center">Signup</h3>
-      <div className="media-buttons">
-        <div className="mr-3">
-          <button className="btn btn-md btn-danger">
-            continue with
-            <br />
-            <i className="fa fa-google" aria-hidden="true"></i> <b>Google</b>
-          </button>
-        </div>
-        <div className="mr-3">
-          <button className="btn btn-md btn-primary">
-            continue with
-            <br />
-            <i className="fa fa-facebook-official" aria-hidden="true"></i>{" "}
-            <b> facebook</b>
-          </button>
-        </div>
-        <div>
-          <button className="btn btn-md btn-info">
-            continue with
-            <br />
-            <i className="fa fa-twitter-square" aria-hidden="true"></i>
-            <b> Twitter</b>
-          </button>
-        </div>
-      </div>
-      <div className="form">
-        <form onSubmit={formik.handleSubmit}>
-          <div className="row ml-0 mt-2">
-            <div className="form-group col-6">
-              <input
-                className="form-control"
-                placeholder="firstname"
-                name="firstname"
-                id="firstname"
-                type="text"
-                {...formik.getFieldProps("firstname")}
-              />
-              {formik.errors.firstname && formik.touched.firstname ? (
-                <div className="error">{formik.errors.firstname}</div>
-              ) : null}
-            </div>
-            <div className="form-group col-6">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="lastname"
-                name="lastname"
-                id="lastname"
-                {...formik.getFieldProps("lastname")}
-              />
-              {formik.errors.lastname && formik.touched.lastname ? (
-                <div className="error">{formik.errors.lastname}</div>
-              ) : null}
-            </div>
-          </div>
-          <div className="form-group ml-3">
-            <input
-              type="text"
-              placeholder="Email"
-              className="form-control"
-              name="email"
+      <form className={classes.form} noValidate onSubmit={formik.handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              autoComplete="fname"
+              name="firstName"
+              variant="outlined"
+              required
+              fullWidth
+              id="firstName"
+              label="First Name"
+              autoFocus
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              variant="outlined"
+              required
+              fullWidth
+              id="lastName"
+              label="Last Name"
+              name="lastName"
+              autoComplete="lname"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              required
+              fullWidth
               id="email"
-              {...formik.getFieldProps("email")}
+              label="Email Address"
+              name="email"
+              autoComplete="email"
             />
-            {formik.errors.email && formik.touched.email ? (
-              <div className="error">{formik.errors.email}</div>
-            ) : null}
-          </div>
-          <div className="form-group ml-3">
-            <input
-              type="password"
-              placeholder="Password"
-              className="form-control"
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              required
+              fullWidth
               name="password"
+              label="Password"
+              type="password"
               id="password"
-              {...formik.getFieldProps("password")}
+              autoComplete="current-password"
             />
-            {formik.errors.password && formik.touched.password ? (
-              <div className="error">{formik.errors.password}</div>
-            ) : null}
-          </div>
-          <div className="form-group ml-3" align="center">
-            <button className="btn btn-success btn-block col-5" type="submit">
-              Signup
-            </button>
-            <small>
-              By Signing up you agree to our
-              <a href="/">
-                <b> Privacy Policy</b>
-              </a>{" "}
-              and
-              <a href="/">
-                <b> Terms of use.</b>
-              </a>
-            </small>
-          </div>
-        </form>
-      </div>
-    </div>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign Up
+          </Button>
+          <Grid item xs={12}>
+            <Typography variant="h7" color="inherit" noWrap>
+              By Signing up you are agree with our{" "}
+              <Link href="#" variant="body2">
+                terms and conditions
+              </Link>
+            </Typography>
+          </Grid>
+        </Grid>
+      </form>
+    </React.Fragment>
   );
 };
 

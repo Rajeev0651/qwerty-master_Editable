@@ -20,7 +20,7 @@ function Header() {
       .catch((err) => console.log(err));
   };
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="container-fluid navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       {route && <Redirect to={{ pathname: "/" }} />}
       <NavLink to="#" className="navbar-brand">
         StartUp
@@ -66,7 +66,8 @@ function Header() {
       <form
         className="form-inline my-2 my-lg-0"
         onSubmit={(e) => e.preventDefault()}
-        style={{ marginLeft: "134px" }}>
+        style={{ marginLeft: "134px" }}
+      >
         <input
           className="form-control mr-sm-2"
           type="search"

@@ -1,20 +1,9 @@
 import React from "react";
 import "./Trending.css";
 function Trending() {
-  function handleclick(e) {
-    document.querySelector(".nav").style.display = "flex";
-    document.querySelector("#show").style.display = "none";
-    var rightbar = document.querySelector(".RightBar");
-    rightbar.style.width = "300px";
-  }
   return (
-    <div className="Trending" className="card" style={{ marginRight: "0px" }}>
+    <div className="Trending" className="card" style={{ marginRight: "0px", position: "fixed" }}>
       <img></img>
-      <div id="show" className="trendingdisp">
-        <button className="btn btn-danger" id="showtrend" onClick={handleclick}>
-          click me to see trending
-        </button>
-      </div>
       <nav className="nav flex-column" style={{ marginRight: "0px" }}>
         <div className="card-body">
           <h5 className="card-title">Trending</h5>
@@ -43,7 +32,7 @@ function Trending() {
             <a href="#" className="card-link">
               StartUps
             </a>
-            <div style={{ marginLeft: "4px" }}>900KM</div>
+            <div style={{ marginLeft: "4px" }}>900K</div>
           </li>
         </ul>
       </nav>

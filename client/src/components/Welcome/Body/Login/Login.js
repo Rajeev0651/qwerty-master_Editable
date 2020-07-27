@@ -1,8 +1,26 @@
 import React, { useState } from "react";
-import "./Login.css";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { useFormik } from "formik";
 import { Redirect } from "react-router-dom";
+
+const useStyles = makeStyles((theme) => ({
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+
 const Login = () => {
+  const classes = useStyles();
   const [route, setRoute] = useState(false);
   const initialValues = {
     loginemail: "",
@@ -40,58 +58,55 @@ const Login = () => {
     },
   });
   return (
-    <div className="loginContainer">
-      {route && <Redirect to={{ pathname: "/home" }} />}
-      <div className="heading">
-        <h3 style={{ marginRight: "25px" }}>Login</h3>
-      </div>
-      <div className="loginform">
-        <form onSubmit={formik.handleSubmit}>
-          <div
-            className="form-group col-10 mb-1"
-            style={{ marginLeft: "25px" }}
-          >
-            <label htmlFor="email">Email</label>
-            <input
-              type="text"
-              id="loginemail"
-              name="loginemail"
-              className="form-control"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.loginemail}
-            />
-            {formik.errors.loginemail && formik.touched.loginemail ? (
-              <div className="error">{formik.errors.loginemail}</div>
-            ) : null}
-          </div>
-          <div className="form-group col-10" style={{ marginLeft: "25px" }}>
-            <label htmlFor="password">Password</label>
-            <input
-              className="form-control"
-              type="password"
-              name="loginpassword"
-              id="loginpassword"
-              value={formik.values.loginpassword}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-            />
-            {formik.errors.loginpassword && formik.touched.loginpassword ? (
-              <div className="error">{formik.errors.loginpassword}</div>
-            ) : null}
-            <small>
-              <a href="/">Forgot Password?</a>
-            </small>
-          </div>
-          <div className="form-group mb-0" align="center">
-            <button className="btn btn-success btn-block col-4" type="submit">
-              Login
-            </button>
-          </div>
-          <hr />
-        </form>
-      </div>
-    </div>
+   
+      route ? (<Redirect to={{ pathname: "/home" }} />):( <React.Fragment>
+      <form className={classes.form} noValidate onSubmit={formik.handleSubmit}>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="email"
+          label="Email Address"
+          name="loginemail"
+          autoComplete="email"
+          autoFocus
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.loginemail}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="loginpassword"
+          label="Password"
+          type="password"
+          id="password"
+          autoComplete="current-password"
+          value={formik.values.loginpassword}
+          onBlur={formik.handleBlur}
+          onChange={formik.handleChange}
+        />
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+        >
+          Sign In
+        </Button>
+        <Grid container>
+          <Grid item xs>
+            <Link href="#" variant="body2">
+              Forgot password?
+            </Link>
+          </Grid>
+        </Grid>
+      </form>
+    </React.Fragment>)
   );
 };
 
