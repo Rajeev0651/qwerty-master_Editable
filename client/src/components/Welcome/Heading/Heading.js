@@ -1,11 +1,11 @@
 import React from "react";
 import AppBar from "@material-ui/core/AppBar";
-import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import { makeStyles } from "@material-ui/core/styles";
+import { Grid } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   "@global": {
@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     borderBottom: `1px solid ${theme.palette.divider}`,
+    display: "flex",
   },
   toolbar: {
     flexWrap: "wrap",
@@ -33,50 +34,58 @@ const Heading = () => {
   const classes = useStyles();
   return (
     <React.Fragment>
+      <Grid>
       <CssBaseline />
       <AppBar
         position="relative"
-        color="defalut"
+        color="default"
         elevation={0}
         className={classes.appBar}
+        palette="dark"
+        elevation="10"
       >
         <Toolbar className={classes.toolbar}>
+        <Grid item xs={12} sm={4} md={6} lg={8} xl={9}>
           <Typography
             variant="h6"
-            color="inherit"
+            color="default"
             noWrap
             className={classes.toolbarTitle}
           >
             Company name
           </Typography>
-          <nav>
-            <Link
-              variant="button"
-              color="textPrimary"
-              href="#"
-              className={classes.link}
-            >
-              Features
-            </Link>
-            <Link
-              variant="button"
-              color="textPrimary"
-              href="#"
-              className={classes.link}
-            >
-              Enterprise
-            </Link>
-            <Link
-              variant="button"
-              color="textPrimary"
-              href="#"
-              className={classes.link}
-            >
-              Support
-            </Link>
-          </nav>
+          </Grid>
+          <Grid item xs={0} sm={8} md={6} lg={4} xl={3}>
+            <nav>
+              <Link
+                variant="button"
+                color="textPrimary"
+                href="#"
+                className={classes.link}
+              >
+                Features
+              </Link>
+              <Link
+                variant="button"
+                color="textPrimary"
+                href="#"
+                className={classes.link}
+              >
+                Enterprise
+              </Link>
+              <Link
+                variant="button"
+                color="textPrimary"
+                href="#"
+                className={classes.link}
+              >
+                Support
+              </Link>
+            </nav>
+          </Grid>
         </Toolbar>
       </AppBar>
+      </Grid>
     </React.Fragment>
   );
 };

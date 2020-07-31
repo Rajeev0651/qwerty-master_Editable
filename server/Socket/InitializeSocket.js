@@ -1,3 +1,5 @@
+const { addUser, removeUser, getUser, getUsersInRoom } = require("./users");
+
 function SocketInitialize(io) {
   io.on("connect", (socket) => {
     console.log("Connected");

@@ -35,6 +35,7 @@ const addtoken = (token,userid) => {
       });
 }
 router.post('/signup',(req,res)=>{
+    console.log("XXX")
     user.find({email:req.body.email},(err,document)=>{
         if(err) console.log(err)
         if(document.length>0){

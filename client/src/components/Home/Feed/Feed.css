@@ -17,3 +17,6 @@
     display: flex;
     flex-flow : column-wrap;
 }
+.Chat{
+    display: none;
+}

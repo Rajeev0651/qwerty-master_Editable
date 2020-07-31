@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
@@ -46,6 +45,7 @@ const Signup = () => {
   };
 
   const validate = (values) => {
+    console.log(values)
     const errors = {};
     if (!values.firstname) errors.firstname = "Required!";
     else if (values.firstname.length > 20)
@@ -62,10 +62,12 @@ const Signup = () => {
     if (!values.password) errors.password = "Redquired!";
     else if (values.password.length < 5)
       errors.password = "Password must be at least 5 characters long!";
+    console.log(errors)  
     return errors;
   };
 
   const onSubmit = (values) => {
+    console.log("XXX")
     fetch("https://localhost:5000/signup", {
       method: "POST",
       mode: "cors",
@@ -95,13 +97,15 @@ const Signup = () => {
           <Grid item xs={12} sm={6}>
             <TextField
               autoComplete="fname"
-              name="firstName"
+              name="firstname"
               variant="outlined"
               required
               fullWidth
-              id="firstName"
+              id="firstname"
               label="First Name"
               autoFocus
+              value={formik.values.firstname}
+              {...formik.getFieldProps("firstname")}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -109,10 +113,12 @@ const Signup = () => {
               variant="outlined"
               required
               fullWidth
-              id="lastName"
+              id="lastname"
               label="Last Name"
-              name="lastName"
+              name="lastname"
               autoComplete="lname"
+              value={formik.values.lastname}
+              {...formik.getFieldProps("lastname")}
             />
           </Grid>
           <Grid item xs={12}>
@@ -124,6 +130,8 @@ const Signup = () => {
               label="Email Address"
               name="email"
               autoComplete="email"
+              value={formik.values.email}
+              {...formik.getFieldProps("email")}
             />
           </Grid>
           <Grid item xs={12}>
@@ -135,7 +143,8 @@ const Signup = () => {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
+              value={formik.values.password}
+              {...formik.getFieldProps("password")}
             />
           </Grid>
           <Button

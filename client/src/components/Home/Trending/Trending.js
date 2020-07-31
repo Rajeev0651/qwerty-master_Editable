@@ -1,42 +1,53 @@
 import React from "react";
-import "./Trending.css";
+import { makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
+const useStyles = makeStyles({
+  table: {
+    width: 200,
+  },
+});
+
+function createData(name, value) {
+  return { name, value};
+}
+
+const rows = [
+  createData('Google', 5),
+  createData('Yahoo', 4),
+  createData('Uber', 3),
+  createData('Tesle', 2),
+  createData('StartUps', 1),
+];
+
 function Trending() {
+  const classes = useStyles();
   return (
-    <div className="Trending" className="card" style={{ marginRight: "0px", position: "fixed" }}>
-      <img></img>
-      <nav className="nav flex-column" style={{ marginRight: "0px" }}>
-        <div className="card-body">
-          <h5 className="card-title">Trending</h5>
-          <p className="card-text">See what's happening around !!</p>
-        </div>
-        <ul className="list-group list-group-flush" className="card-body">
-          <li className="list-group-item">
-            <a href="#" className="card-link">
-              Google
-            </a>
-            <div style={{ marginLeft: "4px" }}>1.2M</div>
-          </li>
-          <li className="list-group-item">
-            <a href="#" className="card-link">
-              Twitter Hacked
-            </a>
-            <div style={{ marginLeft: "4px" }}>1.1M</div>
-          </li>
-          <li className="list-group-item">
-            <a href="#" className="card-link">
-              Modi Wave
-            </a>
-            <div style={{ marginLeft: "4px" }}>1M</div>
-          </li>
-          <li className="list-group-item">
-            <a href="#" className="card-link">
-              StartUps
-            </a>
-            <div style={{ marginLeft: "4px" }}>900K</div>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <TableContainer>
+    <Table className={classes.table} aria-label="simple table">
+      <TableHead>
+        <TableRow>
+          <TableCell>Topic</TableCell>
+          <TableCell align="right">Engagement</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rows.map((row) => (
+          <TableRow key={row.name}>
+            <TableCell component="th" scope="row">
+              {row.name}
+            </TableCell>
+            <TableCell align="right">{row.value} M</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </TableContainer>
   );
 }
 

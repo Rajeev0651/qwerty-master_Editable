@@ -21,6 +21,7 @@ const addDocument = (doc, contents) => {
   });
 };
 router.post("/home/CreateTopic", (req, res) => {
+  console.log("Getting content request !!")
   tokens = req.headers.token.substring(6);
   console.log(tokens);
   console.log(req.body);

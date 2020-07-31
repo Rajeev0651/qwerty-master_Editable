@@ -2,9 +2,10 @@ const { addRoom } = require("./room");
 const users = [];
 
 const addUser = ({ id, name, room }) => {
+  console.log(id, name, room);
   if (name != null && room != null) {
-    name = name.trim().toLowerCase();
-    room = room.trim().toLowerCase();
+    name = name.toLowerCase();
+    room = room.toLowerCase();
   } else {
     return { error: "Username and room are required." };
   }
