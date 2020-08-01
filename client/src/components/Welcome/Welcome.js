@@ -6,7 +6,9 @@ import Footer from "./Footer/Footer";
 import { Redirect } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 
+
 const Welcome = () => {
+
   const [valid, SetValid] = useState(false);
   const [connected, SetConnected] = useState(false);
   useEffect(() => {

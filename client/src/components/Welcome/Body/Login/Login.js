@@ -58,7 +58,6 @@ const Login = () => {
     },
   });
   return (
-   
       route ? (<Redirect to={{ pathname: "/home" }} />):( <React.Fragment>
       <form className={classes.form} noValidate onSubmit={formik.handleSubmit}>
         <TextField

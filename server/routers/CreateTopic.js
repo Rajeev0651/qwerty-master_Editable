@@ -28,11 +28,8 @@ router.post("/home/CreateTopic", (req, res) => {
   res.set("Access-Control-Allow-Origin", "https://localhost:3000");
   res.set("Access-Control-Allow-Credentials", "true");
   if (req.headers.token) {
-    console.log("Header present");
     user.find({ token: tokens }, (err, document) => {
-      console.log(document);
       if (document.length != 0) {
-        console.log("present");
         var data = user.find({ token: tokens });
         addDocument(document, req.body);
       } else {
