@@ -16,6 +16,7 @@ const signupRoute = require("./routers/signup");
 const homeRoute = require("./routers/home");
 const logoutRoute = require("./routers/logout");
 const CreateTopic = require("./routers/CreateTopic");
+const FeedRequest = require("./routers/FeedRequests")
 
 dotenv.config();
 const uri = process.env.ATLAS_URI;
@@ -29,7 +30,7 @@ mongoose.connect(uri, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
-  useFindAndModify: false
+  useFindAndModify: false,
 });
 const connection = mongoose.connection;
 connection.on("error", console.error.bind(console, "connection error:"));
@@ -41,10 +42,11 @@ app.use(homeRoute);
 app.use(loginRoute);
 app.use(signupRoute);
 app.use(logoutRoute);
+app.use(FeedRequest);
 app.use(CreateTopic);
+
 //app.use(CreateSocket);
 const PORT = process.env.PORT || 5000;
-
 const server = https.createServer(options, app).listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });

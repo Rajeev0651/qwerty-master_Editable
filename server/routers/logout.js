@@ -8,7 +8,7 @@ router.get('/logout',(req,res) => {
     console.log(req.cookies)
     token.deleteOne({token:req.cookies.token},(err,document) =>{
         if(err) console.log(err)
-        else console.log('deleted from token collection')
+        else console.log('deleted frzom token collection')
     })
     user.updateOne({token:req.cookies.token},{token:""},(err,log) => {
         if(err) console.log(err)

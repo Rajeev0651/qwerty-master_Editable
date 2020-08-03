@@ -1,12 +1,10 @@
-import React, { useState } from "react";
-import ChatBox from "../ChatBox/ChatBox";
+import React, { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Image from "./image.jpg";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Trending from "../Trending/Trending";
 import RightBar from "../RightBar/RightBar";
-import Chat from "../Feed/Feed"
 import { Paper, Button, Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
@@ -16,11 +14,10 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import "./Feed.css";
-import { Route, Switch,Redirect, useRouteMatch } from "react-router-dom";
+import { Redirect, useRouteMatch } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,17 +71,45 @@ function Feed() {
   const classes = useStyles();
   let match = useRouteMatch();
   const [route, setRoute] = useState(false);
-  const [items, setItems] = useState(Array.from({ length: 2 }));
-  const [postID, setPostID] = useState(Array.from({ length: 2 }))
+  const [ub, setUpper] = useState(3);
+  const [lb, setLower] = useState(1);
+  const [items, setItems] = useState(Array.from({ length: 3 }));
+  const [postID, setPostID] = useState(Array.from({ length: 2 }));
   const [user, setUser] = useState();
   const [room, setRoom] = useState();
+
+  useEffect(() => {
+    fetch("https://localhost:5000/feedrequest", {
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setItems((items) => [...items, 1, 2, 3]);
+        setPostID((postID) => [...postID, data.first, data.second, data.third]);
+        console.log(data);
+        setLower(lb + data.jump);
+        setUpper(ub + data.jump);
+      });
+  }, []);
+
   function fetchMoreData() {
     // a fake async api call like which sends
     // 20 more records in .5 secs
-    setTimeout(() => {
-      setItems((items) => [...items, 1, 2, 3]);
-      setPostID((postID)=> [...postID, "User1", "User2", "User3"])
-    }, 1000);
+    fetch("https://localhost:5000/feedrequest", {
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setItems((items) => [...items, 1, 2, 3]);
+        setPostID((postID) => [...postID, data.first, data.second, data.third]);
+        console.log(data);
+        setLower(lb + data.jump);
+        setUpper(ub + data.jump);
+      });
   }
 
   const handleClick = (Post) => {
@@ -99,17 +124,21 @@ function Feed() {
     //     console.log(data);
     //     document.cookie =
     //       "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        setUser(Post)
-        console.log(Post,"PPPPPPPPPPPPPPP")
-        setRoom("1")
-        setRoute(true);
-      //})
-     // .catch((err) => console.log(err));
+    setUser(Post);
+    console.log(Post, "PPPPPPPPPPPPPPP");
+    setRoom("1");
+    setRoute(true);
+    //})
+    // .catch((err) => console.log(err));
   };
 
   return (
     <React.Fragment>
-       {route && <Redirect to={{ pathname: "home/chat", state:{Name: user, Room: room} }} />}
+      {route && (
+        <Redirect
+          to={{ pathname: "home/chat", state: { Name: user, Room: room } }}
+        />
+      )}
       <Container maxWidth="xl" disableGutters>
         <Grid container spacing={0}>
           <Grid
@@ -170,7 +199,7 @@ function Feed() {
                         aria-label="large outlined primary button group"
                       >
                         <Button>Like</Button>
-                        <Button onClick={()=>handleClick(i)}>Join</Button>
+                        <Button onClick={() => handleClick(i)}>Join</Button>
                         {console.log(i, "XXX")}
                         <Button>Share</Button>
                       </ButtonGroup>
@@ -196,7 +225,6 @@ function Feed() {
           </Grid>
         </Grid>
       </Container>
-     
     </React.Fragment>
   );
 }
