@@ -1,34 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
 import Grid from "@material-ui/core/Grid";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import clsx from "clsx";
 import CardHeader from "@material-ui/core/CardHeader";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Collapse from "@material-ui/core/Collapse";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import MenuIcon from "@material-ui/icons/Menu";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormGroup from "@material-ui/core/FormGroup";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
 import io from "socket.io-client";
-import { css } from "glamor";
-import ScrollToBottom from "react-scroll-to-bottom";
 import { Avatar, Box, Container, Card } from "@material-ui/core";
 import Messages from "./messages/messages";
 import Input from "../ChatBox/Input/input.js";
-import ProfileImage from "./rajeev.PNG";
-import {useLocation, Redirect} from 'react-router-dom'
+import { Widget } from 'react-chat-widget';
+import 'react-chat-widget/lib/styles.css';
+import { useLocation, Redirect } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
@@ -70,68 +52,61 @@ const useStyles = makeStyles((theme) => ({
 let socket;
 
 function ChatBox(props) {
-  let location = useLocation()
+  let location = useLocation();
   const classes = useStyles();
-  const [route, setRoute] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-
-  const ROOT_CSS = css({
-    height: 500,
-    width: 1000,
-  });
-
-  let ChatData = [
-    "Ajhfkevednvifeefe",
-    "Befneknfk",
-    "Cefejagng",
-    "Deaheiafe",
-    "Eehfae3f 3r3 fe",
-  ];
 
   const [name, setName] = useState("");
   const [room, setRoom] = useState("");
-  const [users, setUsers] = useState("");
+  const [route, setRoute] = useState(true);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const ENDPOINT = "https://localhost:5000";
+  socket = io(ENDPOINT);
+  useEffect(() => {
+    fetch("https://localhost:5000/chatbox", {
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(location.state);
+        if (data.res == "success") {
+          setName(location.state.Name);
+          setRoom(location.state.Room);
+          socket.emit("join", { name: "Rajeev", room: "Room1" }, (error) => {
+            console.log(name, room, "Joining !!");
+            if (error) {
+              alert(error);
+            }
+          });
+        } else {
+          setRoute(false);
+        }
+      });
+  }, ENDPOINT);
 
   useEffect(() => {
-    console.log(location.state)
-    let name = location.state.Name
-    let room = location.state.Room;
-    socket = io(ENDPOINT);
-    setRoom(room);
-    setName(name);
-
-    socket.emit("join", { name, room }, (error) => {
-      if (error) {
-        alert(error);
-      }
-    });
-  }, [ENDPOINT, location]);
-
-  useEffect(() => {
-    socket.on("message", (message) => {
-      setMessages((messages) => [...messages, message]);
-    });
-
-    socket.on("roomData", ({ users }) => {
-      setUsers(users);
-    });
+    socket.on('message.sent', (data)=>{
+      setMessages(data);
+    })
   }, []);
 
-  const sendMessage = (event) => {
+  const sendMessage = (event)=>
+  {
     event.preventDefault();
-
-    if (message) {
-      socket.emit("sendMessage", message, () => setMessage(""));
+    if(message)
+    {
+      socket.emit('message.send',{
+        message: message,
+        username: "Rajeev"
+      })
     }
-  };
-  console.log(messages);
+  }
 
   return (
     <React.Fragment>
+      {route === false ? <Redirect to={{ pathname: "/" }} /> : null}
       <Container maxWidth="xl" disableGutters>
         <Grid
           container
@@ -157,14 +132,7 @@ function ChatBox(props) {
                 subheader="Viewing"
               />
             </Card>
-            <Container disableGutters>
-              <Messages messages={messages} name={name} />
-              <Input
-                message={message}
-                setMessage={setMessage}
-                sendMessage={sendMessage}
-              />
-            </Container>
+            <Widget />
           </Grid>
           <Grid container item xl={0} lg={0}></Grid>
         </Grid>

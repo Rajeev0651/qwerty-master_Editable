@@ -1,32 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const user = require("../models/models.users");
-const tokener = require("../models/models.tokens");
-const jwt = require("jsonwebtoken");
 const operation = require("../models/model_operations");
-const dotenv = require("dotenv");
-dotenv.config();
-const secret = process.env.SECRET_KEY;
-const createtoken = (id) => {
-  let token = jwt.sign({ id: id }, secret);
-  return token;
-};
-const adddocument = async function (values, userid, token) {
+const tokenoperation = require("../TokenManagement/CreateToken");
+const adddocument = async function (UserData) {
   return new Promise((resolve) => {
-    var adduser = new user({
-      firstName: values.firstname,
-      lastName: values.lastname,
-      email: values.email,
-      password: values.password,
-      token: token,
-      userId: userid,
+    var AddUser = new user({
+      userId: UserData.email,
+      firstName: UserData.firstname,
+      lastName: UserData.lastname,
+      email: UserData.email,
+      password: UserData.password,
     });
-    adduser.save(async (err, userdoc) => {
+    AddUser.save(async (err, userdoc) => {
       var res;
       if (err) return console.error(err);
-      console.log("saved to user collection.");
-      await operation.createIndexing(userid), // Creating new Indexing ID doc for each user    ( User Index Created )
-        await operation.indexing(userid, "DetailsID", userdoc.id), // Adding user details ID   ( Updated )
+      console.log("Saved to user collection (SignUp)");
+      await operation.createIndexing(UserData.email), // Creating New Indexing Doc for each User    ( User Index Created )
+        await operation.indexing(UserData.email, "DetailsID", userdoc.id), // Adding user details ID   ( Updated )
         (res = await operation.CreateUserContent({
           //   ( Content initialized successfully !!!)
           userId: userdoc.userId,
@@ -37,30 +28,40 @@ const adddocument = async function (values, userid, token) {
     }); // Adding user's content ID
   });
 };
-const addtoken = (token, userid) => {
-  var addtokener = new tokener({
-    token,
-    userid,
-  });
-  addtokener.save(function (err, tokendoc) {
-    if (err) return console.error(err);
-    console.log("saved to token collection.");
-    operation.indexing(userid, "TokenID", tokendoc.id);
-  });
-};
 router.post("/signup", (req, res) => {
   user.find({ email: req.body.email }, async (err, document) => {
-    if (err) console.log(err);
-    if (document.length > 0) {
-      res.send({ user: "email alreadt exist!" });
-    } else if (document.length === 0) {
-      const token = createtoken(req.body.email);
-      await adddocument(req.body, req.body.email, token);
-      await addtoken(token, req.body.email);
+    if (err) {
+      console.log(err, "signup");
       const response = {
-        token: token,
-        succ: true,
+        status: "invalid",
+        message: "Server Error",
       };
+      res.send(response).sendStatus(500);
+    }
+    if (document.length > 0) {
+      const response = {
+        status: "invalid",
+        message: "Email exists",
+      };
+      res.send(response).sendStatus(400);
+    } else if (document.length === 0) {
+      const UserId = req.body.email; // Store UserID on Variable
+      const UserData = req.body;
+      const token = tokenoperation.AccessAndRefreshToken(UserId); // Generate and access and refresh token
+      await adddocument(UserData);
+      console.log("Tokens : ", token);
+      const response = {
+        status: "ok",
+      };
+      console.log("SignUp Done !!");
+      res.cookie("ATC", token.AccessToken, {
+        maxAge: 3600000,
+        httpOnly: true,
+      });
+      res.cookie("RTC", token.RefreshToken, {
+        maxAge: 864000000,
+        httpOnly: true,
+      });
       res.send(response);
     }
   });

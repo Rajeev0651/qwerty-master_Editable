@@ -6,6 +6,8 @@ const token = require("../models/models.tokens");
 const contents = require("../models/models.contents");
 const FeedContent = require("../models/Contents/FeedContents");
 const operation = require("../models/Contents/ContentsOperations");
+const tokenoperation = require("../TokenManagement/VerifyToken");
+const payloadoperation = require("../TokenManagement/GetPayload");
 const { Mongoose } = require("mongoose");
 const content = require("../models/Contents/model.AllContent");
 
@@ -14,41 +16,39 @@ dotenv.config();
 function addDocument(userdoc, data) {
   console.log(userdoc[0].userId);
   return new Promise((resolve) => {
-    var ob;
-    resolve(
-      contents.findOneAndUpdate(
-        { userId: userdoc[0].userId },
-        {
-          $push: {
-            content: {
-              heading: data.Heading,
-              description: data.Descriptions,
-            },
+    var obt;
+    contents.findOneAndUpdate(
+      { userId: userdoc[0].userId },
+      {
+        $push: {
+          content: {
+            heading: data.Heading,
+            description: data.Descriptions,
           },
         },
-        { upsert: true, new: true },
-        async (err, doc) => {
-          console.log(doc, "Content inserted sccessfully !!");
-          console.log();
-          ob = doc.content[doc.content.length - 1].id;
-          console.log(ob, "AAAAAAAAAa");
-         await operation.descriptions(
-            userdoc[0].userId,
-            doc.content[doc.content.length - 1].id,
-            doc.content.length
-          );
-          return ob
-        }
-      )
+      },
+      { upsert: true, new: true },
+      async (err, doc) => {
+        resolve(console.log(doc, "Content inserted sccessfully !!"));
+        console.log();
+        obt = doc.content[doc.content.length - 1].id;
+        console.log(doc.content.length, "LLLLLLLLLLLLL");
+        await operation.descriptions(
+          userdoc[0].userId,
+          doc.content[doc.content.length - 1].id,
+          doc.content.length
+        );
+        CreateFeedContent(userdoc, data, obt);
+      }
     );
   });
 }
 
-function CreateFeedContent(user, contentdata, id) {
+function CreateFeedContent(user, contentdata, ids) {
   var Feed = new FeedContent({
     userId: user[0].userId,
     firstName: user[0].firstName,
-    contentId: id,
+    contentId: ids,
     content: [
       {
         heading: contentdata.Heading,
@@ -62,25 +62,45 @@ function CreateFeedContent(user, contentdata, id) {
   });
 }
 
-router.post("/home/CreateTopic", (req, res) => {
-  console.log("Getting content request !!");
-  tokens = req.headers.token.substring(6);
-  console.log(tokens);
-  console.log(req.body);
-  res.set("Access-Control-Allow-Origin", "https://localhost:3000");
-  res.set("Access-Control-Allow-Credentials", "true");
-  if (req.headers.token) {
-    user.find({ token: tokens }, async (err, document) => {
-      if (document.length != 0) {
-        var ids = await addDocument(document, req.body);
-        console.log(ids, "JJJJJJJJJJJ");
-        CreateFeedContent(document, req.body, ids);
-      } else {
-        res.send("Token invalid");
-      }
-    });
+router.post("/home/CreateTopic", async (req, res) => {
+  console.log("Getting Create request...");
+  var ids;
+  var Validity = false;
+  const access = req.cookies.ATC;
+  const refresh = req.cookies.RTC;
+  if (access == undefined || refresh == undefined) {
+    const response = {
+      status: "invalid",
+      message: "Token not present",
+    };
+    res.send(response);
   } else {
-    res.send({ user: "Token not present" });
+    try {
+      Validity = await tokenoperation.AccessAndRefreshToken(refresh, access);
+      if (Validity == true) {
+        var decoded = await payloadoperation.payload(access);
+        var UserId = decoded.payload.id;
+        user.find({ userId: UserId }, async (err, document) => {
+          if (document.length != 0) {
+            ids = await addDocument(document, req.body);
+            const response = {
+              status: "ok",
+              message: "Content Created",
+            };
+            res.send(response);
+          }
+        });
+      } else {
+        const response = {
+          status: "invalid",
+          message: "Access decline",
+        };
+        res.send(response);
+      }
+    } catch (err) {
+      console.log(err);
+      res.sendStatus(500);
+    }
   }
 });
 module.exports = router;

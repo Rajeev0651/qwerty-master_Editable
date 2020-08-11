@@ -1,19 +1,36 @@
-const token = require("../models/models.tokens");
 const express = require("express");
+const tokenoperation = require("../TokenManagement/VerifyToken");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.set("Access-Control-Allow-Origin", "https://localhost:3000");
-  res.set("Access-Control-Allow-Credentials", "true");
-  if (req.cookies.token) {
-    token.find({ token: req.cookies.token }, (err, document) => {
-      document.length > 0
-        ? res.send({ user: "authenticated" })
-        : res.send({ user: "invalid" });
-    });
-    return;
+router.get("/", async (req, res) => {
+  var Validity = false;
+  const access = req.cookies.ATC;
+  const refresh = req.cookies.RTC;
+  if (access == undefined || refresh == undefined) {
+    const response = {
+      status: "invalid",
+      message: "Token not present",
+    };
+    res.send(response);
   } else {
-    res.send({ user: "invalid" });
+    try {
+      Validity = await tokenoperation.AccessAndRefreshToken(refresh, access);
+      if (Validity == true) {
+        const response = {
+          status: "ok",
+          message: "Access Granted ",
+        };
+        res.send(response);
+      } else {
+        const response = {
+          status: "invalid",
+          message: "Access decline",
+        };
+        res.send(response);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 });
 

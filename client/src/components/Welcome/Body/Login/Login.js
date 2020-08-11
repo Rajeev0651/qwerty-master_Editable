@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -43,6 +41,8 @@ const Login = () => {
       fetch("https://localhost:5000/login", {
         method: "POST",
         mode: "cors",
+        withCredentials: true,
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -51,14 +51,15 @@ const Login = () => {
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
-          document.cookie = `token=${data.token}`;
           setRoute(true);
         })
         .catch((err) => console.log(err));
     },
   });
-  return (
-      route ? (<Redirect to={{ pathname: "/home" }} />):( <React.Fragment>
+  return route ? (
+    <Redirect to={{ pathname: "/home" }} />
+  ) : (
+    <React.Fragment>
       <form className={classes.form} noValidate onSubmit={formik.handleSubmit}>
         <TextField
           variant="outlined"
@@ -105,7 +106,7 @@ const Login = () => {
           </Grid>
         </Grid>
       </form>
-    </React.Fragment>)
+    </React.Fragment>
   );
 };
 

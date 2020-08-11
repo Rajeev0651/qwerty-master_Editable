@@ -14,7 +14,8 @@ const Home = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        data.user !== "authenticated" && SetValid(false);
+        console.log(data)
+        data.status !== "ok" && SetValid(false);
       });
   }, []);
   return (
@@ -22,7 +23,7 @@ const Home = () => {
       {valid === false ? <Redirect to={{ pathname: "/" }} /> : null}
       <Header />
       <Switch>
-      <Route path={`${match.path}/chat`} component={ChatBox} exact={true}/>
+      <Route path={`${match.path}/chat`} component={ChatBox} exact={true} />
       </Switch>
       {console.log(match.path)}
     </React.Fragment>

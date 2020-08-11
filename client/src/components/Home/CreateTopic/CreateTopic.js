@@ -43,16 +43,13 @@ function CreateTopic() {
       fetch("https://localhost:5000/home/CreateTopic", {
         method: "POST",
         mode: "cors",
+        credentials: "include",
         headers: {
-          token: document.cookie,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
       })
-        .then((response) => response.json())
-        .then((data) => {
-          setRoute(true);
-        })
+        .then(setRoute(true))
         .catch((err) => console.log(err));
     },
   });
@@ -68,7 +65,12 @@ function CreateTopic() {
           </Grid>
           <Grid item xs={6}>
             <Paper className={classes.paper}>
-              <form className={classes.root} noValidate autoComplete="off" onSubmit={formik.handleSubmit}>
+              <form
+                className={classes.root}
+                noValidate
+                autoComplete="off"
+                onSubmit={formik.handleSubmit}
+              >
                 <div>
                   <TextField
                     id="outlined-multiline-flexible"
@@ -96,9 +98,9 @@ function CreateTopic() {
                   />
                 </div>
                 <Button variant="contained" color="primary" type="submit">
-                Post
-              </Button>
-              </form> 
+                  Post
+                </Button>
+              </form>
             </Paper>
           </Grid>
           <Grid item xs={3}>

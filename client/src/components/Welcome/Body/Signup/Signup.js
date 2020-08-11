@@ -45,7 +45,7 @@ const Signup = () => {
   };
 
   const validate = (values) => {
-    console.log(values)
+    console.log(values);
     const errors = {};
     if (!values.firstname) errors.firstname = "Required!";
     else if (values.firstname.length > 20)
@@ -62,24 +62,23 @@ const Signup = () => {
     if (!values.password) errors.password = "Redquired!";
     else if (values.password.length < 5)
       errors.password = "Password must be at least 5 characters long!";
-    console.log(errors)  
+    console.log(errors);
     return errors;
   };
 
   const onSubmit = (values) => {
-    console.log("XXX")
     fetch("https://localhost:5000/signup", {
       method: "POST",
       mode: "cors",
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
+      credentials: 'include',
       body: JSON.stringify(values),
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        document.cookie = `token=${data.token}`;
         setRoute(true);
       });
   };

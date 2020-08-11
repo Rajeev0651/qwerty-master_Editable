@@ -57,8 +57,6 @@ function Header() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        document.cookie =
-          "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         setRoute(true);
       })
       .catch((err) => console.log(err));

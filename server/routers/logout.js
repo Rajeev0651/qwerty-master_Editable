@@ -1,20 +1,18 @@
-const router = require('express').Router()
-const user = require('../models/models.users')
-const token = require('../models/models.tokens')
+const router = require("express").Router();
 
-router.get('/logout',(req,res) => {
-    res.set('Access-Control-Allow-Origin' , "https://localhost:3000")
-    res.set('Access-Control-Allow-Credentials', 'true')
-    console.log(req.cookies)
-    token.deleteOne({token:req.cookies.token},(err,document) =>{
-        if(err) console.log(err)
-        else console.log('deleted frzom token collection')
-    })
-    user.updateOne({token:req.cookies.token},{token:""},(err,log) => {
-        if(err) console.log(err)
-        else console.log(log)
-    })
-    res.send({'msg':'hello'})
-})
+router.get("/logout", (req, res) => {
+  const response = {
+    status: "ok",
+  };
+  res.cookie("ATC", 0, {
+    maxAge: 0,
+    httpOnly: true,
+  });
+  res.cookie("RTC", 0, {
+    maxAge: 0,
+    httpOnly: true,
+  });
+  res.send(response);
+});
 
-module.exports = router
+module.exports = router;

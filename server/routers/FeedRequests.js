@@ -1,28 +1,41 @@
-const token = require("../models/models.tokens");
 const express = require("express");
 const operation = require("../models/Contents/FeedAlgorithm");
+const tokenoperation = require("../TokenManagement/VerifyToken");
 const router = express.Router();
 
-router.get("/feedrequest", (req, res) => {
-  res.set("Access-Control-Allow-Origin", "https://localhost:3000/");
-  res.set("Access-Control-Allow-Credentials", "true");
-  console.log("Getting request...");
-  if (req.cookies.token) {
-    token.find({ token: req.cookies.token }, async (err, document) => {
-      if (err) return console.log(err);
-      if (document.length > 0) {
-        let upperbound = 3;
-        let lowerbound = 1;
-        var ob;
-        ob = await operation.LatestAlgorithm(upperbound, lowerbound);
-        console.log(ob, "feedreq");
-        res.send({ first: "first", second: "second", third: "third", jump: 3 });
-      } else {
-        res.send({ user: "invalid" });
-      }
-    });
+router.get("/feedrequest", async (req, res) => {
+  console.log("Getting Feed request...");
+  var Validity = false;
+  const access = req.cookies.ATC;
+  const refresh = req.cookies.RTC;
+  if (access == undefined || refresh == undefined) {
+    const response = {
+      status: "invalid",
+      message: "Token not present",
+    };
+    res.send(response);
   } else {
-    res.send({ user: "invalid" });
+    try {
+      Validity = await tokenoperation.AccessAndRefreshToken(refresh, access);
+      if (Validity == true) {
+        let lowerbound = req.query.batch;
+        console.log(lowerbound);
+        ob = await operation.LatestAlgorithm(
+          parseInt(lowerbound) + 2,
+          parseInt(lowerbound)
+        );
+        console.log(ob, "feedreq");
+        res.send(ob);
+      } else {
+        const response = {
+          status: "invalid",
+          message: "Access decline",
+        };
+        res.send(response);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   }
 });
 

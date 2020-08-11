@@ -2,18 +2,20 @@ const contentdetails = require("./model.AllContent");
 const FeedContent = require("../Contents/FeedContents");
 
 async function RetriveContent(doc) {
-  var ids = [];
-  for (i = 0; i < doc.length; i++) {
-    ids[i] = doc[i].contentid;
-  }
-  console.log(ids);
-  await FeedContent.find()
-    .where("_id")
-    .in(ids)
-    .exec((err, doc) => {
-      console.log(doc, "res");
-    });
-  console.log("XXX")  
+  return new Promise(async(resolve) => {
+    var ids = [];
+    for (i = 0; i < doc.length; i++) {
+      ids[i] = doc[i].contentid;
+    }
+    console.log(ids);
+      await FeedContent.find()
+        .where("contentId")
+        .in(ids)
+        .exec((err, doc) => {
+          console.log(doc, "res");
+          resolve(doc)
+        })
+  });
 }
 
 function LatestAlgorithm(upperbound, lowerbound) {
@@ -25,8 +27,8 @@ function LatestAlgorithm(upperbound, lowerbound) {
       .exec(async (err, doc) => {
         if (err) return console.log(err);
         ob = await RetriveContent(doc);
-        resolve((ob = doc));
-        return ob;
+        console.log(ob, "RRRRRRRRRRRRRRRRRR")
+        resolve(ob);
       });
   });
 }

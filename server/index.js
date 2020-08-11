@@ -9,14 +9,15 @@ const app = express();
 const https = require("https");
 const SocketInitialize = require("./Socket/InitializeSocket");
 app.use(cookieparser());
-app.use(cors());
+app.use(cors({ credentials: true, origin: "https://localhost:3000" }));
 app.use(express.json());
 const loginRoute = require("./routers/login");
 const signupRoute = require("./routers/signup");
 const homeRoute = require("./routers/home");
 const logoutRoute = require("./routers/logout");
 const CreateTopic = require("./routers/CreateTopic");
-const FeedRequest = require("./routers/FeedRequests")
+const FeedRequest = require("./routers/FeedRequests");
+const ChatBoxPageRequest = require("./routers/ChatBox");
 
 dotenv.config();
 const uri = process.env.ATLAS_URI;
@@ -44,6 +45,7 @@ app.use(signupRoute);
 app.use(logoutRoute);
 app.use(FeedRequest);
 app.use(CreateTopic);
+app.use(ChatBoxPageRequest);
 
 //app.use(CreateSocket);
 const PORT = process.env.PORT || 5000;

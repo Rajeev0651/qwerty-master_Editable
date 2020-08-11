@@ -71,67 +71,54 @@ function Feed() {
   const classes = useStyles();
   let match = useRouteMatch();
   const [route, setRoute] = useState(false);
-  const [ub, setUpper] = useState(3);
   const [lb, setLower] = useState(1);
-  const [items, setItems] = useState(Array.from({ length: 3 }));
-  const [postID, setPostID] = useState(Array.from({ length: 2 }));
-  const [user, setUser] = useState();
-  const [room, setRoom] = useState();
+  const [postID, setPostID] = useState([1]);
+  const [user, setUser] = useState("P");
+  const [room, setRoom] = useState("P");
 
   useEffect(() => {
-    fetch("https://localhost:5000/feedrequest", {
+    let url = "https://localhost:5000/feedrequest?batch=" + lb;
+    fetch(url, {
       method: "GET",
       mode: "cors",
+      withCredentials: true,
       credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
-        setItems((items) => [...items, 1, 2, 3]);
-        setPostID((postID) => [...postID, data.first, data.second, data.third]);
-        console.log(data);
-        setLower(lb + data.jump);
-        setUpper(ub + data.jump);
+        var len = data.length;
+        for (let i = 0; i < len; i++) {
+          setPostID((postID) => [...postID, data[i].content[0].heading]);
+        }
+        if (len >= 1) console.log(data[0].content[0].heading);
+        setLower(lb + len);
       });
   }, []);
+
+  const handleClick = async () => {
+    setUser("Rajeev");
+    setRoom("Singh");
+    setRoute(true);
+  };
 
   function fetchMoreData() {
     // a fake async api call like which sends
     // 20 more records in .5 secs
-    fetch("https://localhost:5000/feedrequest", {
+    let url = "https://localhost:5000/feedrequest?batch=" + lb;
+    fetch(url, {
       method: "GET",
       mode: "cors",
       credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {
-        setItems((items) => [...items, 1, 2, 3]);
-        setPostID((postID) => [...postID, data.first, data.second, data.third]);
-        console.log(data);
-        setLower(lb + data.jump);
-        setUpper(ub + data.jump);
+        var len = data.length;
+        for (let i = 0; i < len; i++) {
+          setPostID((postID) => [...postID, data[i].content[0].heading]);
+        }
+        setLower(lb + len);
       });
   }
-
-  const handleClick = (Post) => {
-    // e.preventDefault();
-    // fetch("https://localhost:5000/", {
-    //   method: "GET",
-    //   mode: "cors",
-    //   credentials: "include",
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     console.log(data);
-    //     document.cookie =
-    //       "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    setUser(Post);
-    console.log(Post, "PPPPPPPPPPPPPPP");
-    setRoom("1");
-    setRoute(true);
-    //})
-    // .catch((err) => console.log(err));
-  };
-
   return (
     <React.Fragment>
       {route && (
@@ -200,7 +187,6 @@ function Feed() {
                       >
                         <Button>Like</Button>
                         <Button onClick={() => handleClick(i)}>Join</Button>
-                        {console.log(i, "XXX")}
                         <Button>Share</Button>
                       </ButtonGroup>
                     </CardContent>

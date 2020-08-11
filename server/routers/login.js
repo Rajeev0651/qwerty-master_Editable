@@ -1,45 +1,41 @@
 const router = require("express").Router();
 let user = require("../models/models.users");
-let tokener = require("../models/models.tokens");
-const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-const { response } = require("express");
-dotenv.config();
-const secret = process.env.SECRET_KEY;
-const createtoken = (id) => {
-  let token = jwt.sign({ id: id }, secret);
-  return token;
-};
-const addtoken = (token, userid) => {
-  var addtokener = new tokener({
-    token,
-    userid,
-  });
-  addtokener.save(function (err, tokendoc) {
-    if (err) return console.error(err);
-    console.log(" saved to token collection.");
-  });
-};
+const tokenoperation = require("../TokenManagement/CreateToken");
+
 router.post("/login", (req, res) => {
-  res.set("Access-Control-Allow-Origin", "https://localhost:3000");
-  res.set("Access-Control-Allow-Credentials", "true");
   user.find(
     { email: req.body.loginemail, password: req.body.loginpassword },
     (err, document) => {
-      if (err) console.log(err);
-      else {
+      if (err) {
+        console.log(err);
+        const response = {
+          status: "invalid",
+          message: "Server Error",
+        };
+        res.send(response).sendStatus(500);
+      } else {
         if (document.length === 0) {
-          res.json({ user: "invalid email/password" });
-        } else {
-          const token = createtoken(document[0].userId);
-          addtoken(token, document[0].userId);
-          document[0].token = token;
-          document[0].save();
           const response = {
-            token: token,
-            succ: true,
+            status: "invalid",
+            message: "Wrong email",
           };
-          res.status(200).send(response);
+          res.send(response)
+        } else {
+          const UserId = document[0].userId;
+          const token = tokenoperation.AccessAndRefreshToken(UserId);
+          const response = {
+            status: "ok",
+          };
+          console.log("Login Done !!");
+          res.cookie("ATC", token.AccessToken, {
+            maxAge: 3600000,
+            httpOnly: true,
+          });
+          res.cookie("RTC", token.RefreshToken, {
+            maxAge: 864000000,
+            httpOnly: true,
+          });
+          res.send(response);
         }
       }
     }

@@ -1,6 +1,7 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 import "./input.css";
+import { Socket } from "socket.io-client";
 
 function Input(props) {
   return (
