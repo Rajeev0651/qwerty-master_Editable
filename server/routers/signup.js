@@ -46,8 +46,9 @@ router.post("/signup", (req, res) => {
       res.send(response).sendStatus(400);
     } else if (document.length === 0) {
       const UserId = req.body.email; // Store UserID on Variable
+      const Name = req.body.firstname
       const UserData = req.body;
-      const token = tokenoperation.AccessAndRefreshToken(UserId); // Generate and access and refresh token
+      const token = tokenoperation.AccessAndRefreshToken(UserId, Name); // Generate and access and refresh token
       await adddocument(UserData);
       console.log("Tokens : ", token);
       const response = {
@@ -61,6 +62,9 @@ router.post("/signup", (req, res) => {
       res.cookie("RTC", token.RefreshToken, {
         maxAge: 864000000,
         httpOnly: true,
+      });
+      res.cookie("CTC", token.ChatToken, {
+        maxAge: 864000000,
       });
       res.send(response);
     }

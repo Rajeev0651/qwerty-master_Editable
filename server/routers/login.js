@@ -19,10 +19,10 @@ router.post("/login", (req, res) => {
             status: "invalid",
             message: "Wrong email",
           };
-          res.send(response)
+          res.send(response);
         } else {
           const UserId = document[0].userId;
-          const token = tokenoperation.AccessAndRefreshToken(UserId);
+          const token = tokenoperation.AccessAndRefreshToken(UserId, document[0].firstName);
           const response = {
             status: "ok",
           };
@@ -34,6 +34,9 @@ router.post("/login", (req, res) => {
           res.cookie("RTC", token.RefreshToken, {
             maxAge: 864000000,
             httpOnly: true,
+          });
+          res.cookie("CTC", token.ChatToken, {
+            maxAge: 864000000,
           });
           res.send(response);
         }

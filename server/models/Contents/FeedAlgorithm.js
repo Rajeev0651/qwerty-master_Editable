@@ -27,7 +27,6 @@ function LatestAlgorithm(upperbound, lowerbound) {
       .exec(async (err, doc) => {
         if (err) return console.log(err);
         ob = await RetriveContent(doc);
-        console.log(ob, "RRRRRRRRRRRRRRRRRR")
         resolve(ob);
       });
   });

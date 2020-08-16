@@ -59,13 +59,6 @@ let post = {
   sm: 0,
   xm: 0,
 };
-let chat = {
-  xl: 0,
-  lg: 0,
-  md: 0,
-  sm: 0,
-  xm: 0,
-};
 
 function Feed() {
   const classes = useStyles();
@@ -73,6 +66,7 @@ function Feed() {
   const [route, setRoute] = useState(false);
   const [lb, setLower] = useState(1);
   const [postID, setPostID] = useState([1]);
+  const [roomID, setRoomID] = useState([1]);
   const [user, setUser] = useState("P");
   const [room, setRoom] = useState("P");
 
@@ -89,16 +83,18 @@ function Feed() {
         var len = data.length;
         for (let i = 0; i < len; i++) {
           setPostID((postID) => [...postID, data[i].content[0].heading]);
+          setRoomID((roomID) => [...roomID, data[i].contentId]);
         }
         if (len >= 1) console.log(data[0].content[0].heading);
         setLower(lb + len);
       });
   }, []);
 
-  const handleClick = async () => {
+  const handleClick = (i) => {
     setUser("Rajeev");
-    setRoom("Singh");
+    setRoom(roomID[i]);
     setRoute(true);
+    console.log("RoomID : ", i, roomID[i]);
   };
 
   function fetchMoreData() {
@@ -115,17 +111,14 @@ function Feed() {
         var len = data.length;
         for (let i = 0; i < len; i++) {
           setPostID((postID) => [...postID, data[i].content[0].heading]);
+          setRoomID((roomID) => [...roomID, data[i].contentId]);
         }
         setLower(lb + len);
       });
   }
   return (
     <React.Fragment>
-      {route && (
-        <Redirect
-          to={{ pathname: "home/chat", state: { Name: user, Room: room } }}
-        />
-      )}
+      {route && <Redirect to={{ pathname: "home/chat" }} />}
       <Container maxWidth="xl" disableGutters>
         <Grid container spacing={0}>
           <Grid
@@ -186,7 +179,7 @@ function Feed() {
                         aria-label="large outlined primary button group"
                       >
                         <Button>Like</Button>
-                        <Button onClick={() => handleClick(i)}>Join</Button>
+                        <Button onClick={() => handleClick(index)}>Join</Button>
                         <Button>Share</Button>
                       </ButtonGroup>
                     </CardContent>

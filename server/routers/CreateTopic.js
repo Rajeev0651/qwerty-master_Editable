@@ -2,14 +2,12 @@ const express = require("express");
 const router = express.Router();
 const user = require("../models/models.users");
 const dotenv = require("dotenv");
-const token = require("../models/models.tokens");
 const contents = require("../models/models.contents");
 const FeedContent = require("../models/Contents/FeedContents");
 const operation = require("../models/Contents/ContentsOperations");
 const tokenoperation = require("../TokenManagement/VerifyToken");
 const payloadoperation = require("../TokenManagement/GetPayload");
-const { Mongoose } = require("mongoose");
-const content = require("../models/Contents/model.AllContent");
+const crud = require("../Redis/CRUD");
 
 dotenv.config();
 
@@ -29,7 +27,7 @@ function addDocument(userdoc, data) {
       },
       { upsert: true, new: true },
       async (err, doc) => {
-        resolve(console.log(doc, "Content inserted sccessfully !!"));
+        console.log(doc, "Content inserted sccessfully !!");
         console.log();
         obt = doc.content[doc.content.length - 1].id;
         console.log(doc.content.length, "LLLLLLLLLLLLL");
@@ -39,6 +37,7 @@ function addDocument(userdoc, data) {
           doc.content.length
         );
         CreateFeedContent(userdoc, data, obt);
+        resolve(obt);
       }
     );
   });
@@ -83,6 +82,8 @@ router.post("/home/CreateTopic", async (req, res) => {
         user.find({ userId: UserId }, async (err, document) => {
           if (document.length != 0) {
             ids = await addDocument(document, req.body);
+            console.log(ids);
+            crud.Add(ids);
             const response = {
               status: "ok",
               message: "Content Created",

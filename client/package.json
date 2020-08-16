@@ -17,9 +17,10 @@
     "react-emoji": "^0.5.0",
     "react-infinite-scroll-component": "^5.0.5",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^3.4.2",
+    "react-scripts": "^3.4.3",
     "react-scroll-to-bottom": "^3.0.0",
     "react-swipeable-views": "^0.13.9",
+    "redis": "^3.0.2",
     "socket.io-client": "^2.3.0",
     "socketio-auth": "^0.1.1",
     "yup": "^0.29.1"
