@@ -84,4 +84,7 @@ function FetchMessages(ContentID) {
   });
   return messages;
 }
-module.exports = { Add, AddMessage, AddUsers, CheckUser, FetchMessages };
+function Flush() {
+  client.flushall();
+}
+module.exports = { Add, AddMessage, AddUsers, CheckUser, FetchMessages, Flush };

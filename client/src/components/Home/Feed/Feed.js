@@ -62,13 +62,12 @@ let post = {
 
 function Feed() {
   const classes = useStyles();
-  let match = useRouteMatch();
   const [route, setRoute] = useState(false);
   const [lb, setLower] = useState(1);
   const [postID, setPostID] = useState([1]);
   const [roomID, setRoomID] = useState([1]);
-  const [user, setUser] = useState("P");
-  const [room, setRoom] = useState("P");
+  const [user, setUser] = useState("");
+  const [room, setRoom] = useState("");
 
   useEffect(() => {
     let url = "https://localhost:5000/feedrequest?batch=" + lb;
@@ -81,6 +80,7 @@ function Feed() {
       .then((response) => response.json())
       .then((data) => {
         var len = data.length;
+        setUser(data[0].firstName);
         for (let i = 0; i < len; i++) {
           setPostID((postID) => [...postID, data[i].content[0].heading]);
           setRoomID((roomID) => [...roomID, data[i].contentId]);
@@ -91,7 +91,6 @@ function Feed() {
   }, []);
 
   const handleClick = (i) => {
-    setUser("Rajeev");
     setRoom(roomID[i]);
     setRoute(true);
     console.log("RoomID : ", i, roomID[i]);
@@ -118,7 +117,11 @@ function Feed() {
   }
   return (
     <React.Fragment>
-      {route && <Redirect to={{ pathname: "home/chat" }} />}
+      {route && (
+        <Redirect
+          to={{ pathname: "home/chat", state: { Name: user, Room: room } }}
+        />
+      )}
       <Container maxWidth="xl" disableGutters>
         <Grid container spacing={0}>
           <Grid
