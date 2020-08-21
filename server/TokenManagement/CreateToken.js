@@ -58,4 +58,4 @@ function AccessAndRefreshToken(UserId, Name) {
   return key;
 }
 
-module.exports = { AccessAndRefreshToken };
+module.exports = { AccessAndRefreshToken, RefreshToken, AccessToken, ChatToken };

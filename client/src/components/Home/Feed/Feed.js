@@ -80,7 +80,8 @@ function Feed() {
       .then((response) => response.json())
       .then((data) => {
         var len = data.length;
-        setUser(data[0].firstName);
+        if(len>0)
+          setUser(data[0].firstName);
         for (let i = 0; i < len; i++) {
           setPostID((postID) => [...postID, data[i].content[0].heading]);
           setRoomID((roomID) => [...roomID, data[i].contentId]);

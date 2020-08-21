@@ -83,7 +83,7 @@ router.post("/home/CreateTopic", async (req, res) => {
           if (document.length != 0) {
             ids = await addDocument(document, req.body);
             console.log(ids);
-            crud.Add(ids);
+            crud.RedisAddContent(ids,2,2,2,2,2);
             const response = {
               status: "ok",
               message: "Content Created",

@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 function RefreshToken(token) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const key = process.env.REFRESHTOKENKEY;
     jwt.verify(token, key, (err, decoded) => {
       if (err) {
@@ -17,7 +17,7 @@ function RefreshToken(token) {
 }
 
 function AccessToken(token) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const key = process.env.ACCESSTOKENKEY;
     jwt.verify(token, key, (err, decoded) => {
       if (err) {
@@ -42,4 +42,4 @@ function AccessAndRefreshToken(refreshtoken, accesstoken) {
     }
   });
 }
-module.exports = { AccessAndRefreshToken };
+module.exports = { AccessAndRefreshToken, AccessToken, RefreshToken };

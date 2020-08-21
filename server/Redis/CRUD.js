@@ -1,90 +1,239 @@
 var redisJson = require("redis-store-json");
 const data = require("../Redis/data");
-var client = data.key[0];
 
-function Add(ContentID) {
+/****************************** Adding New Content Field ************************************* */
+async function RedisAddContent(
+  ContentID,
+  AdminId,
+  AdminName,
+  CreatedAt,
+  Space,
+  Moderators
+) {
+  /***** Variables */
   var client = data.key[0];
   redisJson.use(client);
-  let testSet = {
-    no_of_users: "5",
-    no_of_likes: "2",
-    messageid: ContentID + "_message",
-    userid: ContentID + "_user",
+  let Content_Data_Obj = {
+    admin_id: AdminId,
+    admin_name: AdminName,
+    created_at: CreatedAt,
+    space: Space,
+    mod: Moderators,
+    no_of_hits: 0,
+    no_of_likes: 0,
+    no_of_shares: 0,
+    message_id: ContentID + "_messages",
+    user_id: ContentID + "_users",
   };
-
-  redisJson
-    .set(ContentID, testSet)
+  /***** Set */
+  await redisJson
+    .set(ContentID, Content_Data_Obj)
     .then(() => {
-      console.log("Redis inserted JSON");
+      console.log("Redis Content created for :", ContentID);
     })
     .catch((err) => {
-      console.log("Error: ", err);
+      console.log("Redis Error on Content Creation: ", err);
     });
-
-  redisJson.getJSON(ContentID).then((data) => {
-    console.log(data);
-  });
+  /***** Get */
+  await redisJson
+    .getJSON(ContentID)
+    .then((Content_data) => {
+      console.log("Redis Content Data : ", Content_data);
+    })
+    .catch((err) => {
+      console.log("Redis Content Output Error : ", err);
+    });
+  RedisAddMessage(false, ContentID, AdminId, AdminName, "Welcome", CreatedAt);
+  RedisAddUsers(false, ContentID, AdminId, AdminName);
 }
-function AddMessage(ContentID, UserID, msg, time) {
+/****************************** Adding each Message on a Content_Messages Field ********************* */
+async function RedisAddMessage(
+  update,
+  ContentID,
+  UserID,
+  UserName,
+  Message,
+  Time
+) {
+  /***** Variables */
   var client = data.key[0];
   redisJson.use(client);
-  let msgdata = {
-    message: msg,
-    userid: UserID,
-    time: time,
+  let Message_Data_Obj = {
+    user_id: [],
+    user_name: [],
+    message: [],
+    time: [],
   };
-  redisJson
-    .set(ContentID + "_message", msgdata)
-    .then(() => {
-      console.log("Redis inserted JSON");
-    })
-    .catch((err) => {
-      console.log("Error: ", err);
-    });
-
-  redisJson.getJSON(ContentID + "_message").then((data) => {
-    console.log(data);
-  });
-}
-function AddUsers(ContentID, userid) {
-  var client = data.key[0];
-  console.log("User Added to socket room...");
-  client.LPUSH(ContentID + "_user", userid);
-  client.LLEN(ContentID + "_user", (err, data) => {
-    for (var i = 0; i < data; i++) {
-      client.LINDEX(ContentID + "_user", i, (err, data) => {
-        //console.log(data);
+  if (update == false) {
+    /***** Set */
+    redisJson
+      .set(ContentID + "_messages", Message_Data_Obj)
+      .then(() => {
+        console.log("Redis message inserted : ", Message);
+      })
+      .catch((err) => {
+        console.log("Redis Error on message insertion : ", err);
       });
-    }
+  } else {
+    /***** Set */
+    await redisJson
+      .getValueByJsonKey(ContentID + "_messages", "user_id")
+      .then((data) => {
+        data = data.push(UserID);
+        redisJson
+          .modifyValueByJsonKey(ContentID + "_messages", "user_id", data)
+          .then(() => {})
+          .catch((err) => {
+            console.error(err); //error when modifing error
+          });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    /***** Set */
+    await redisJson
+      .getValueByJsonKey(ContentID + "_messages", "user_name")
+      .then((data) => {
+        data = data.push(UserName);
+        redisJson
+          .modifyValueByJsonKey(ContentID + "_messages", "user_name", data)
+          .then(() => {})
+          .catch((err) => {
+            console.error(err); //error when modifing error
+          });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    /***** Set */
+    await redisJson
+      .getValueByJsonKey(ContentID + "_messages", "message")
+      .then((data) => {
+        data = data.push(Message);
+        redisJson
+          .modifyValueByJsonKey(ContentID + "_messages", "message", data)
+          .then(() => {})
+          .catch((err) => {
+            console.error(err); //error when modifing error
+          });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    /***** Set */
+    await redisJson
+      .getValueByJsonKey(ContentID + "_messages", "time")
+      .then((data) => {
+        data = data.push(Time);
+        redisJson
+          .modifyValueByJsonKey(ContentID + "_messages", "time", data)
+          .then(() => {})
+          .catch((err) => {
+            console.error(err); //error when modifing error
+          });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+  /***** Get */
+  redisJson.getJSON(ContentID + "_messages").then((data) => {
+    console.log("Redis all messages in a ContentID : ", data);
   });
 }
-function CheckUser(ContentID, userid) {
+/****************************** Adding users to Content ****************************************** */
+async function RedisAddUsers(Update, ContentID, UserID, UserName) {
+  /***** Variable */
   var client = data.key[0];
+  redisJson.use(client);
+  let User_Data_Obj = {
+    user_id: [],
+    user_name: [],
+  };
+  if (Update == false) {
+    /** Operation */
+    redisJson
+      .set(ContentID + "_users", User_Data_Obj)
+      .then(() => {
+        console.log("Redis User Added to socket room...");
+      })
+      .catch((err) => {
+        console.log("Redis Error on room insertion : ", err);
+      });
+  } else {
+    /***** Set */
+    await redisJson
+      .getValueByJsonKey(ContentID + "_users", "user_name")
+      .then((data) => {
+        data = data.push(UserName);
+        redisJson
+          .modifyValueByJsonKey(ContentID + "_users", "user_name", data)
+          .then(() => {})
+          .catch((err) => {
+            console.error(err); //error when modifing error
+          });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    /***** Set */
+    await redisJson
+      .getValueByJsonKey(ContentID + "_users", "user_id")
+      .then((data) => {
+        data = data.push(UserID);
+        redisJson
+          .modifyValueByJsonKey(ContentID + "_users", "user_id", data)
+          .then(() => {})
+          .catch((err) => {
+            console.error(err);
+          });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+}
+/****************************** Check if Users visited in a Content ************************** */
+function RedisCheckUser(ContentID, userid) {
+  /***** Variable */
+  var client = data.key[0];
+  redisJson.use(client);
   var res = false;
-  client.LLEN(ContentID + "_user", (err, data) => {
-    for (var i = 0; i < data; i++) {
-      client.LINDEX(ContentID + "_user", i, (err, data) => {
-        if (data == userid) {
-          res = true;
-          break;
-        }
-      });
-    }
-  });
+  /***** Get */
+
+  /***** Return  */
   return res;
 }
-function FetchMessages(ContentID) {
-  var messages = [];
-  client.LLEN(ContentID + "_message", (err, len) => {
-    for (var i = 0; i < len; i++) {
-      client.LINDEX(ContentID + "_message", i, (err, message) => {
-        messages.push(message);
-      });
-    }
-  });
+/************************** Getting all stored messages in a Content ******************* */
+function RedisFetchMessages(ContentID) {
+  /***** Variable */
+  var client = data.key[0];
+  redisJson.use(client);
+  var messages;
+  /***** Get */
+  redisJson
+    .getJSON(ContentID + "_messages")
+    .then((data) => {
+      console.log(data);
+      messages = data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  /***** Return  */
   return messages;
 }
-function Flush() {
+/****************************** Clearing All Redis Databases ****************************************** */
+function RedisFlush() {
+  var client = data.key[0];
+  redisJson.use(client);
   client.flushall();
 }
-module.exports = { Add, AddMessage, AddUsers, CheckUser, FetchMessages, Flush };
+module.exports = {
+  RedisAddContent,
+  RedisAddMessage,
+  RedisAddUsers,
+  RedisCheckUser,
+  RedisFetchMessages,
+  RedisFlush,
+};
