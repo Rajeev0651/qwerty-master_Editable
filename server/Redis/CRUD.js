@@ -53,7 +53,7 @@ async function RedisAddMessage(
   UserID,
   UserName,
   Message,
-  Time
+  Times
 ) {
   /***** Variables */
   var client = data.key[0];
@@ -62,14 +62,14 @@ async function RedisAddMessage(
     user_id: [],
     user_name: [],
     message: [],
-    time: [],
+    times: [],
   };
   if (update == false) {
     /***** Set */
     redisJson
       .set(ContentID + "_messages", Message_Data_Obj)
       .then(() => {
-        console.log("Redis message inserted : ", Message);
+        console.log("Redis message inserted : ", Message_Data_Obj);
       })
       .catch((err) => {
         console.log("Redis Error on message insertion : ", err);
@@ -78,66 +78,69 @@ async function RedisAddMessage(
     /***** Set */
     await redisJson
       .getValueByJsonKey(ContentID + "_messages", "user_id")
-      .then((data) => {
-        data = data.push(UserID);
-        redisJson
+      .then(async(data) => {
+        data.push(UserID);
+        await redisJson
           .modifyValueByJsonKey(ContentID + "_messages", "user_id", data)
           .then(() => {})
           .catch((err) => {
-            console.error(err); //error when modifing error
+            console.log("87", err); //error when modifing error
           });
       })
       .catch((err) => {
-        console.error(err);
+        console.log("174", err);
       });
     /***** Set */
     await redisJson
       .getValueByJsonKey(ContentID + "_messages", "user_name")
-      .then((data) => {
-        data = data.push(UserName);
+      .then(async(data) => {
+        await data.push(UserName);
         redisJson
           .modifyValueByJsonKey(ContentID + "_messages", "user_name", data)
           .then(() => {})
           .catch((err) => {
-            console.error(err); //error when modifing error
+            console.log("102", err); //error when modifing error
           });
       })
       .catch((err) => {
-        console.error(err);
+        console.log("106", err);
+      });
+    /***** Set */
+    await redisJson
+      .getValueByJsonKey(ContentID + "_messages", "times")
+      .then(async(data) => {
+        data.push(Times);
+        console.log("Time adding", Times);
+        await redisJson
+          .modifyValueByJsonKey(ContentID + "_messages", "times", data)
+          .then(() => {
+            console.log("Time pushed...", Times);
+          })
+          .catch((err) => {
+            console.log("132", err); //error when modifing error
+          });
+      })
+      .catch((err) => {
+        console.log("136", err);
       });
     /***** Set */
     await redisJson
       .getValueByJsonKey(ContentID + "_messages", "message")
-      .then((data) => {
-        data = data.push(Message);
-        redisJson
+      .then(async (data) => {
+        data.push(Message);
+        await redisJson
           .modifyValueByJsonKey(ContentID + "_messages", "message", data)
           .then(() => {})
           .catch((err) => {
-            console.error(err); //error when modifing error
+            console.log("117", err); //error when modifing error
           });
       })
       .catch((err) => {
-        console.error(err);
-      });
-    /***** Set */
-    await redisJson
-      .getValueByJsonKey(ContentID + "_messages", "time")
-      .then((data) => {
-        data = data.push(Time);
-        redisJson
-          .modifyValueByJsonKey(ContentID + "_messages", "time", data)
-          .then(() => {})
-          .catch((err) => {
-            console.error(err); //error when modifing error
-          });
-      })
-      .catch((err) => {
-        console.error(err);
+        console.log("121", err);
       });
   }
   /***** Get */
-  redisJson.getJSON(ContentID + "_messages").then((data) => {
+  await redisJson.getJSON(ContentID + "_messages").then((data) => {
     console.log("Redis all messages in a ContentID : ", data);
   });
 }
@@ -165,31 +168,33 @@ async function RedisAddUsers(Update, ContentID, UserID, UserName) {
     await redisJson
       .getValueByJsonKey(ContentID + "_users", "user_name")
       .then((data) => {
-        data = data.push(UserName);
+        data.push(UserName);
+        console.log(data, "TTTTTTTTTTT");
         redisJson
           .modifyValueByJsonKey(ContentID + "_users", "user_name", data)
           .then(() => {})
           .catch((err) => {
-            console.error(err); //error when modifing error
+            console.log("174", err); //error when modifing error
           });
       })
       .catch((err) => {
-        console.error(err);
+        console.log("178", err);
       });
     /***** Set */
     await redisJson
       .getValueByJsonKey(ContentID + "_users", "user_id")
       .then((data) => {
-        data = data.push(UserID);
+        data.push(UserID);
+        console.log(data, "TTTTTTTTTTT");
         redisJson
           .modifyValueByJsonKey(ContentID + "_users", "user_id", data)
           .then(() => {})
           .catch((err) => {
-            console.error(err);
+            console.log("190", err);
           });
       })
       .catch((err) => {
-        console.error(err);
+        console.log("194", err);
       });
   }
 }

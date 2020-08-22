@@ -8,20 +8,19 @@ function SocketInitialize(io) {
   iochatroom.on("connect", (socket) => {
     console.log("Connected...", socket.id);
     /*Room Join request */
-    socket.on("Join", ({ Name, Room }) => {
+    socket.on("Join", ({ Name, Room, UserId }) => {
       console.log(Room, Name);
-      redis.RedisAddUsers(true, Room ,"23", Name);
+      redis.RedisAddUsers(true, Room ,UserId, Name);
       socket.join(Room);
       console.log("User " + Name + " added to: " + Room);
     });
     /*Client Message */
-    socket.on("client-message", ({ Name, Room, message, time }) => {
-      console.log(Name, Room, message);
-      redis.RedisAddMessage(Room, Name, message, time);
+    socket.on("client-message", ({ Name, UserId, Room, message, time }) => {
+      console.log(Name, Room, message, time);
+      redis.RedisAddMessage(true, Room, UserId, Name, message, time);
       iochatroom
         .to(Room)
         .emit("message", { Name, Room, message, currenttime: time });
-      console.log(time);
     });
     /*Client Disconnect */
     socket.on("disconnect", (socket) => {

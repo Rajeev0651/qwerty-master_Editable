@@ -64,6 +64,7 @@ function ChatBox(props) {
   let location = useLocation();
   const [name, setName] = useState(location.state.Name);
   const [room, setRoom] = useState(location.state.Room);
+  const [userid, setUserId] = useState(location.state.UserId)
   const [route, setRoute] = useState(true);
   const [messages, setMessages] = useState([]);
   const [senders, setSenders] = useState([]);
@@ -88,6 +89,7 @@ function ChatBox(props) {
       var time = today.getHours() + ":" + today.getMinutes();
       socket.emit("client-message", {
         Name: name,
+        UserId: userid,
         Room: room,
         message: values.text,
         time: time,
@@ -97,20 +99,8 @@ function ChatBox(props) {
   });
 
   useEffect(() => {
-    let url = "https://localhost:5000/chatbox";
-    fetch(url, {
-      method: "GET",
-      mode: "cors",
-      withCredentials: true,
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setName(data.Name);
-      });
-
     socket = socketIOClient.connect(ENDPOINT);
-    socket.emit("Join", { Name: name, Room: room }, (err) => {
+    socket.emit("Join", { Name: name, Room: room, UserId: userid }, (err) => {
       if (err) {
         alert(err);
       }
@@ -122,7 +112,7 @@ function ChatBox(props) {
       setMessages((messages) => [...messages, message]);
       setSenders((senders) => [...senders, Name]);
       setTime((time) => [...time, currenttime]);
-      console.log(currenttime, "ZZZZZZZZz");
+      console.log(currenttime);
     });
   }, []);
 

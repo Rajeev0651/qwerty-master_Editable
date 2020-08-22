@@ -67,6 +67,7 @@ function Feed() {
   const [postID, setPostID] = useState([1]);
   const [roomID, setRoomID] = useState([1]);
   const [user, setUser] = useState("");
+  const [userID, setUserId] = useState("");
   const [room, setRoom] = useState("");
 
   useEffect(() => {
@@ -80,14 +81,17 @@ function Feed() {
       .then((response) => response.json())
       .then((data) => {
         var len = data.length;
-        if(len>0)
+        if (len > 0) {
+          console.log(data[0].firstName)
           setUser(data[0].firstName);
-        for (let i = 0; i < len; i++) {
-          setPostID((postID) => [...postID, data[i].content[0].heading]);
-          setRoomID((roomID) => [...roomID, data[i].contentId]);
+          setUserId(data[0].userId);
+          for (let i = 0; i < len; i++) {
+            setPostID((postID) => [...postID, data[i].content[0].heading]);
+            setRoomID((roomID) => [...roomID, data[i].contentId]);
+          }
+          if (len >= 1) console.log(data[0].content[0].heading);
+          setLower(lb + len);
         }
-        if (len >= 1) console.log(data[0].content[0].heading);
-        setLower(lb + len);
       });
   }, []);
 
@@ -120,7 +124,10 @@ function Feed() {
     <React.Fragment>
       {route && (
         <Redirect
-          to={{ pathname: "home/chat", state: { Name: user, Room: room } }}
+          to={{
+            pathname: "home/chat",
+            state: { Name: user, Room: room, UserId: userID },
+          }}
         />
       )}
       <Container maxWidth="xl" disableGutters>
