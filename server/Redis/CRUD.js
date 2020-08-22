@@ -78,7 +78,7 @@ async function RedisAddMessage(
     /***** Set */
     await redisJson
       .getValueByJsonKey(ContentID + "_messages", "user_id")
-      .then(async(data) => {
+      .then(async (data) => {
         data.push(UserID);
         await redisJson
           .modifyValueByJsonKey(ContentID + "_messages", "user_id", data)
@@ -93,7 +93,7 @@ async function RedisAddMessage(
     /***** Set */
     await redisJson
       .getValueByJsonKey(ContentID + "_messages", "user_name")
-      .then(async(data) => {
+      .then(async (data) => {
         await data.push(UserName);
         redisJson
           .modifyValueByJsonKey(ContentID + "_messages", "user_name", data)
@@ -108,7 +108,7 @@ async function RedisAddMessage(
     /***** Set */
     await redisJson
       .getValueByJsonKey(ContentID + "_messages", "times")
-      .then(async(data) => {
+      .then(async (data) => {
         data.push(Times);
         console.log("Time adding", Times);
         await redisJson

@@ -1,10 +1,11 @@
 const express = require("express");
-const user = require("../models/models.users");
 const router = express.Router();
 const tokenoperation = require("../TokenManagement/VerifyToken");
 const payloadoperation = require("../TokenManagement/GetPayload");
+const user = require("../models/models.users");
 
-router.get("/chatbox", async (req, res) => {
+router.get("/clientdata", async (req, res) => {
+  console.log("Getting client data request...");
   var Validity = false;
   const access = req.cookies.ATC;
   const refresh = req.cookies.RTC;
@@ -19,13 +20,19 @@ router.get("/chatbox", async (req, res) => {
       Validity = await tokenoperation.AccessAndRefreshToken(refresh, access);
       if (Validity == true) {
         var decoded = await payloadoperation.payload(access);
-        var Name = decoded.payload.name;
-        const response = {
-          Name: Name,
-          status: "invalid",
-          message: "Access decline",
-        };
-        res.send(response);
+        var UserId = decoded.payload.id;
+        user.find({ userId: UserId }, async (err, document) => {
+          if (document.length != 0) {
+            userid = decoded.payload.id
+            username = decoded.payload.name
+            const response = {
+              Name : username,
+              Id : userid,
+              message: "Content Created",
+            };
+            res.send(response);
+          }
+        });
       } else {
         const response = {
           status: "invalid",
@@ -39,5 +46,4 @@ router.get("/chatbox", async (req, res) => {
     }
   }
 });
-
 module.exports = router;

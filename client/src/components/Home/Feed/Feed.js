@@ -71,6 +71,21 @@ function Feed() {
   const [room, setRoom] = useState("");
 
   useEffect(() => {
+    let url = "https://localhost:5000/clientdata";
+     fetch(url, {
+      method: "GET",
+      mode: "cors",
+      withCredentials: true,
+      credentials: "include",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setUser(data.Name)
+        setUserId(data.Id)
+      });
+  }, []);
+
+  useEffect(() => {
     let url = "https://localhost:5000/feedrequest?batch=" + lb;
     fetch(url, {
       method: "GET",
@@ -82,9 +97,6 @@ function Feed() {
       .then((data) => {
         var len = data.length;
         if (len > 0) {
-          console.log(data[0].firstName)
-          setUser(data[0].firstName);
-          setUserId(data[0].userId);
           for (let i = 0; i < len; i++) {
             setPostID((postID) => [...postID, data[i].content[0].heading]);
             setRoomID((roomID) => [...roomID, data[i].contentId]);

@@ -19,6 +19,7 @@ const CreateTopic = require("./routers/CreateTopic");
 const FeedRequest = require("./routers/FeedRequests");
 const ChatBoxPageRequest = require("./routers/ChatBox");
 const redisID = require("./Redis/data")
+const clientdata = require("./routers/ClientData")
 const Redis = require("./Redis/initializeRedis");
 
 dotenv.config();
@@ -43,6 +44,7 @@ connection.once("open", () => {
 
 var client = Redis.RedisClient();
 redisID.insert(client)
+app.use(clientdata)
 app.use(homeRoute);
 app.use(loginRoute);
 app.use(signupRoute);

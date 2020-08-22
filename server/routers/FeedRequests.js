@@ -22,16 +22,12 @@ router.get("/feedrequest", async (req, res) => {
       if (Validity == true) {
         let lowerbound = req.query.batch;
         console.log(lowerbound);
-        ob = await operation.LatestAlgorithm(
+        contentdata = await operation.LatestAlgorithm(
           parseInt(lowerbound) + 2,
           parseInt(lowerbound)
         );
-        Data = {
-          Name : decoded.payload.name,
-          Id : decoded.payload.id
-        }
-        console.log(Data, "feedreq");
-        res.send(ob);
+        console.log(contentdata, "feedreq");
+        res.send(contentdata);
       } else {
         const response = {
           status: "invalid",

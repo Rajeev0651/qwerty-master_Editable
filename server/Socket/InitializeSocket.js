@@ -24,6 +24,7 @@ function SocketInitialize(io) {
     });
     /*Client Disconnect */
     socket.on("disconnect", (socket) => {
+      
       console.log("Disconnect...", socket);
     });
   });

@@ -64,7 +64,7 @@ function ChatBox(props) {
   let location = useLocation();
   const [name, setName] = useState(location.state.Name);
   const [room, setRoom] = useState(location.state.Room);
-  const [userid, setUserId] = useState(location.state.UserId)
+  const [userid, setUserId] = useState(location.state.UserId);
   const [route, setRoute] = useState(true);
   const [messages, setMessages] = useState([]);
   const [senders, setSenders] = useState([]);
@@ -105,7 +105,7 @@ function ChatBox(props) {
         alert(err);
       }
     });
-  }, ENDPOINT);
+  }, []);
 
   useEffect(() => {
     socket.on("message", ({ Name, Room, message, currenttime }) => {
