@@ -4,7 +4,7 @@ import "./RightBar.css";
 function RightBar() {
   return (
     <React.Fragment>
-      <img src={Image} height="40%" width="40%"></img>
+      <img src={Image} height="40%" width="40%" alt=""></img>
     </React.Fragment>
   );
 }

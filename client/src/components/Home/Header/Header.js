@@ -8,14 +8,12 @@ import Link from "@material-ui/core/Link";
 import { Link as RouterLink } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import { NavLink, Redirect } from "react-router-dom";
-import Trending from "../Trending/Trending";
+import { Redirect } from "react-router-dom";
 import Feed from "../Feed/Feed";
 import Notifications from "../Notifications/Notifications";
 import Messages from "../Messages/Messages";
 import Profile from "../Profile/Profile";
 import CreateTopic from "../CreateTopic/CreateTopic";
-import Error404 from "../../Error404/Error404";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({

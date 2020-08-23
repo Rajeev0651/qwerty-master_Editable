@@ -190,11 +190,11 @@ async function RedisAddUsers(Update, ContentID, UserID, UserName) {
           .modifyValueByJsonKey(ContentID + "_users", "user_id", data)
           .then(() => {})
           .catch((err) => {
-            console.log("190", err);
+            console.log("193", err);
           });
       })
       .catch((err) => {
-        console.log("194", err);
+        console.log("197", err);
       });
   }
 }
@@ -234,11 +234,64 @@ function RedisFlush() {
   redisJson.use(client);
   client.flushall();
 }
+/****************************** Content Update **********************************/
+async function RedisContentUpdate(ContentID, Hits, Likes, Shares) {
+  /***** Variable */
+  var client = data.key[0];
+  redisJson.use(client);
+  var res = false;
+  /***** Set */
+  if (Likes == 1) {
+    await redisJson
+      .getValueByJsonKey(ContentID, "no_of_likes")
+      .then((data) => {
+        redisJson
+          .modifyValueByJsonKey(ContentID, "no_of_likes", data + 1)
+          .catch((err) => {
+            console.log("246", err); //error when modifing error
+          });
+      })
+      .catch((err) => {
+        console.log("255", err);
+      });
+    await redisJson
+      .getValueByJsonKey(ContentID, "no_of_likes")
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log("263", err);
+      });
+  }
+  if (Hits == 1) {
+    await redisJson
+      .getValueByJsonKey(ContentID, "no_of_hits")
+      .then((data) => {
+        redisJson
+          .modifyValueByJsonKey(ContentID, "no_of_hits", data + 1)
+          .catch((err) => {
+            console.log("273", err); //error when modifing error
+          });
+      })
+      .catch((err) => {
+        console.log("277", err);
+      });
+    await redisJson
+      .getValueByJsonKey(ContentID, "no_of_hits")
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log("285", err);
+      });
+  }
+}
 module.exports = {
   RedisAddContent,
   RedisAddMessage,
   RedisAddUsers,
   RedisCheckUser,
   RedisFetchMessages,
+  RedisContentUpdate,
   RedisFlush,
 };

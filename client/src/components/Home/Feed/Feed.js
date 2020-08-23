@@ -5,7 +5,7 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Trending from "../Trending/Trending";
 import RightBar from "../RightBar/RightBar";
-import { Paper, Button, Box } from "@material-ui/core";
+import { Paper, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Card from "@material-ui/core/Card";
@@ -17,7 +17,8 @@ import IconButton from "@material-ui/core/IconButton";
 import { red } from "@material-ui/core/colors";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import "./Feed.css";
-import { Redirect, useRouteMatch } from "react-router-dom";
+import { Redirect } from "react-router-dom";
+const axios = require("axios").default;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     textAlign: "center",
     color: theme.palette.text.secondary,
+    width: "100%",
   },
   expand: {
     transform: "rotate(0deg)",
@@ -52,17 +54,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-let post = {
-  xl: 6,
-  lg: 6,
-  md: 3,
-  sm: 0,
-  xm: 0,
-};
-
 function Feed() {
   const classes = useStyles();
   const [route, setRoute] = useState(false);
+  const [connected, SetConnected] = useState(false);
   const [lb, setLower] = useState(1);
   const [postID, setPostID] = useState([1]);
   const [roomID, setRoomID] = useState([1]);
@@ -72,7 +67,7 @@ function Feed() {
 
   useEffect(() => {
     let url = "https://localhost:5000/clientdata";
-     fetch(url, {
+    fetch(url, {
       method: "GET",
       mode: "cors",
       withCredentials: true,
@@ -80,8 +75,9 @@ function Feed() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setUser(data.Name)
-        setUserId(data.Id)
+        SetConnected(true);
+        setUser(data.Name);
+        setUserId(data.Id);
       });
   }, []);
 
@@ -102,7 +98,7 @@ function Feed() {
             setRoomID((roomID) => [...roomID, data[i].contentId]);
           }
           if (len >= 1) console.log(data[0].content[0].heading);
-          setLower(lb + len);
+          setLower((lb) => lb + len);
         }
       });
   }, []);
@@ -113,9 +109,23 @@ function Feed() {
     console.log("RoomID : ", i, roomID[i]);
   };
 
+  const likes = (i) => {
+    (async () => {
+      const response = await axios({
+        method: "post",
+        url: "https://localhost:5000/contentresponse",
+        mode: "cors",
+        withCredentials: true,
+        data: {
+          likes: true,
+          contentid: roomID[i]
+        }
+      });
+      const data = await response.data;
+    })();
+  };
+
   function fetchMoreData() {
-    // a fake async api call like which sends
-    // 20 more records in .5 secs
     let url = "https://localhost:5000/feedrequest?batch=" + lb;
     fetch(url, {
       method: "GET",
@@ -134,99 +144,120 @@ function Feed() {
   }
   return (
     <React.Fragment>
-      {route && (
+      {route === true ? (
         <Redirect
-          to={{
+          push to={{
             pathname: "home/chat",
             state: { Name: user, Room: room, UserId: userID },
           }}
         />
-      )}
-      <Container maxWidth="xl" disableGutters>
-        <Grid container spacing={0}>
-          <Grid
-            item
-            xs={false}
-            xm={0}
-            sm={0}
-            md={3}
-            lg={3}
-            xl={3}
-            className="trendingShrink"
-          >
-            <Paper className={classes.paper}>
-              <Trending />
-            </Paper>
-          </Grid>
-          <Grid
-            item
-            xs={false}
-            xm={post.xm}
-            sm={post.sm}
-            md={post.md}
-            lg={post.lg}
-            xl={post.xl}
-          >
-            <InfiniteScroll
-              dataLength={postID.length}
-              next={fetchMoreData}
-              hasMore={true}
-              loader={<h4>Loading...</h4>}
+      ) : connected === true ? (
+        <React.Fragment>
+          <Container maxWidth="xl" disableGutters>
+            <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="flex-start"
             >
-              {postID.map((i, index) => (
+              <Grid
+                item
+                xs={false}
+                xm={0}
+                sm={0}
+                md={3}
+                lg={3}
+                xl={3}
+                className="trendingShrink"
+                container
+                spacing={1}
+              >
                 <Paper className={classes.paper}>
-                  <Card>
-                    <CardHeader
-                      avatar={
-                        <Avatar aria-label="recipe" className={classes.avatar}>
-                          R
-                        </Avatar>
-                      }
-                      action={
-                        <IconButton aria-label="settings">
-                          <MoreVertIcon />
-                        </IconButton>
-                      }
-                      title={i}
-                      subheader="September 14, 2016"
-                    />
-                    <CardMedia
-                      className={classes.media}
-                      image={Image}
-                      title="Image"
-                    />
-                    <CardContent>
-                      <ButtonGroup
-                        size="large"
-                        color="primary"
-                        aria-label="large outlined primary button group"
-                      >
-                        <Button>Like</Button>
-                        <Button onClick={() => handleClick(index)}>Join</Button>
-                        <Button>Share</Button>
-                      </ButtonGroup>
-                    </CardContent>
-                  </Card>
+                  <Trending />
                 </Paper>
-              ))}
-            </InfiniteScroll>
-          </Grid>
-          <Grid
-            item
-            xs={0}
-            xm={0}
-            sm={0}
-            md={3}
-            lg={3}
-            xl={3}
-            className="advertisementShrink"
-          >
-            <Paper className={classes.paper}>
-              <RightBar />
-            </Paper>
-          </Grid>
-        </Grid>
-      </Container>
+              </Grid>
+              <Grid
+                item
+                xs={false}
+                xm={6}
+                sm={6}
+                md={3}
+                lg={0}
+                xl={6}
+                container
+                spacing={1}
+              >
+                <InfiniteScroll
+                  dataLength={postID.length}
+                  next={fetchMoreData}
+                  hasMore={true}
+                  loader={<h4>Loading...</h4>}
+                >
+                  {postID.map((i, index) => (
+                    <Paper className={classes.paper}>
+                      <Card>
+                        <CardHeader
+                          avatar={
+                            <Avatar
+                              aria-label="recipe"
+                              className={classes.avatar}
+                            >
+                              R
+                            </Avatar>
+                          }
+                          action={
+                            <IconButton aria-label="settings">
+                              <MoreVertIcon />
+                            </IconButton>
+                          }
+                          title={i}
+                          subheader="September 14, 2016"
+                        />
+                        <CardMedia
+                          className={classes.media}
+                          image={Image}
+                          title="Image"
+                        />
+                        <CardContent>
+                          <ButtonGroup
+                            size="large"
+                            color="primary"
+                            aria-label="large outlined primary button group"
+                          >
+                            <Button onClick={() => likes(index)}>Like</Button>
+                            <Button onClick={() => handleClick(index)}>
+                              Join
+                            </Button>
+                            <Button>Share</Button>
+                          </ButtonGroup>
+                        </CardContent>
+                      </Card>
+                    </Paper>
+                  ))}
+                </InfiniteScroll>
+              </Grid>
+              <Grid
+                item
+                xs={0}
+                xm={0}
+                sm={0}
+                md={3}
+                lg={3}
+                xl={3}
+                className="advertisementShrink"
+                container
+                spacing={1}
+              >
+                <Paper className={classes.paper}>
+                  <RightBar />
+                </Paper>
+              </Grid>
+            </Grid>
+          </Container>
+        </React.Fragment>
+      ) : (
+        <h1>Loading...</h1>
+      )}
     </React.Fragment>
   );
 }

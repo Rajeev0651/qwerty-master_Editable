@@ -11,6 +11,7 @@ function SocketInitialize(io) {
     socket.on("Join", ({ Name, Room, UserId }) => {
       console.log(Room, Name);
       redis.RedisAddUsers(true, Room ,UserId, Name);
+      redis.RedisContentUpdate(Room, 1, 0, 0)
       socket.join(Room);
       console.log("User " + Name + " added to: " + Room);
     });

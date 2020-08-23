@@ -17,13 +17,13 @@ const Welcome = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        data.status == "ok" && SetValid(true);
+        data.status === "ok" && SetValid(true);
         SetConnected(true);
       });
   }, []);
   return (
     <React.Fragment>
-      {valid == true ? (
+      {valid === true ? (
         <Redirect to={{ pathname: "/home" }} />
       ) : connected ? (
         <React.Fragment>

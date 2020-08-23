@@ -18,9 +18,10 @@ const logoutRoute = require("./routers/logout");
 const CreateTopic = require("./routers/CreateTopic");
 const FeedRequest = require("./routers/FeedRequests");
 const ChatBoxPageRequest = require("./routers/ChatBox");
-const redisID = require("./Redis/data")
-const clientdata = require("./routers/ClientData")
+const redisID = require("./Redis/data");
+const clientdata = require("./routers/ClientData");
 const Redis = require("./Redis/initializeRedis");
+const ContentResponse = require("./routers/ContentResponse")
 
 dotenv.config();
 const uri = process.env.ATLAS_URI;
@@ -43,14 +44,15 @@ connection.once("open", () => {
 });
 
 var client = Redis.RedisClient();
-redisID.insert(client)
-app.use(clientdata)
+redisID.insert(client);
+app.use(clientdata);
 app.use(homeRoute);
 app.use(loginRoute);
 app.use(signupRoute);
 app.use(logoutRoute);
 app.use(FeedRequest);
 app.use(ChatBoxPageRequest);
+app.use(ContentResponse);
 
 app.use(CreateTopic);
 //app.use(CreateSocket);

@@ -42,7 +42,6 @@ const Heading = () => {
         elevation={0}
         className={classes.appBar}
         palette="dark"
-        elevation="10"
       >
         <Toolbar className={classes.toolbar}>
         <Grid item xs={12} sm={4} md={6} lg={8} xl={9}>

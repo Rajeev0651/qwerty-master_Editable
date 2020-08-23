@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import { useFormik } from "formik";
 import { Redirect } from "react-router-dom";
-import { Grid, Container, Paper, Button } from "@material-ui/core";
+import { Grid, Paper, Button } from "@material-ui/core";
 import Trending from "../Trending/Trending";
 import RightBar from "../RightBar/RightBar";
 
