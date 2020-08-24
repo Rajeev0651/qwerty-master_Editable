@@ -6,6 +6,7 @@ const ContentDetails = new Schema(
     userId: { type: String, required: true },
     contentid: { type: String },
     bylatest : { type : Number},
+    byLikes : { type : Number},
     parameters: [
       {
         like: { type: Number, default: "0" },

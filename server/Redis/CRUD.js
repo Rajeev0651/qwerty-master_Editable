@@ -48,13 +48,6 @@ async function RedisAddContent(
   RedisAddMessage(false, ContentID, AdminId, AdminName, "Welcome", CreatedAt);
   RedisAddUsers(false, ContentID, AdminId, AdminName);
 }
-/****************************** Content Lists ****************************** */
-async function ContentLists(contentid) {
-  var client = data.key[0];
-  client.smembers("ClientLists", function (err, reply) {
-    console.log(reply);
-  });
-}
 
 /****************************** Adding each Message on a Content_Messages Field ********************* */
 async function RedisAddMessage(
@@ -249,7 +242,6 @@ async function RedisContentUpdate(ContentID, Hits, Likes, Shares) {
   /***** Variable */
   var client = data.key[0];
   redisJson.use(client);
-  var res = false;
   /***** Set */
   if (Likes == 1) {
     await redisJson
@@ -276,7 +268,7 @@ async function RedisContentUpdate(ContentID, Hits, Likes, Shares) {
       .catch((err) => {
         console.log("263", err);
       });
-    await client.zincrby("ClientIdListed", 1, ContentID);
+    await client.zincrby("ClientIdLists", 1, ContentID);
   }
   if (Hits == 1) {
     await redisJson
@@ -305,6 +297,32 @@ async function RedisContentUpdate(ContentID, Hits, Likes, Shares) {
       });
   }
 }
+var ContentIdSendingData = [];
+function RedisContentIdRanking() {
+  /***** Variable */
+  var client = data.key[0];
+  client.zrevrange("ClientIdLists", 0, 2, (err, arr) => {
+    if (err) console.log("308", err);
+    ContentIdSendingData = arr;
+    console.log("Original : ", arr);
+  });
+}
+function RedisContentTimer() {
+  console.log("Timer started...");
+  setInterval(RedisContentIdRanking, 10000);
+}
+function RedisContentIdSend(ub, lb) {
+  return new Promise((resolve) => {
+    const temp = [];
+    var x = 0;
+    if (lb >= 1) {
+      for (let i = lb - 1; i <= ub && i <= ContentIdSendingData.length; i++) {
+        temp[x++] = ContentIdSendingData[i];
+      }
+      resolve(temp);
+    }
+  });
+}
 module.exports = {
   RedisAddContent,
   RedisAddMessage,
@@ -312,5 +330,7 @@ module.exports = {
   RedisCheckUser,
   RedisFetchMessages,
   RedisContentUpdate,
+  RedisContentTimer,
+  RedisContentIdSend,
   RedisFlush,
 };

@@ -9,7 +9,7 @@ router.get("/feedrequest", async (req, res) => {
   function doStuff() {
     waiting = true;
   }
- // setInterval(doStuff, 1000);
+  // setInterval(doStuff, 1000);
   console.log("Getting Feed request...");
   var Validity = false;
   const access = req.cookies.ATC;
@@ -27,8 +27,12 @@ router.get("/feedrequest", async (req, res) => {
       if (Validity == true) {
         let lowerbound = req.query.batch;
         console.log(lowerbound);
-        contentdata = await operation.LatestAlgorithm(
-          parseInt(lowerbound) + 2, //Upper bound
+        // contentdata = await operation.LatestAlgorithm(
+        //   parseInt(lowerbound) + 2, //Upper bound
+        //   parseInt(lowerbound) // Lower bound
+        // );
+        contentdata = await operation.LikesAlgorithm(
+          parseInt(lowerbound)+2, //Upper bound
           parseInt(lowerbound) // Lower bound
         );
         console.log(contentdata, "feedreq");

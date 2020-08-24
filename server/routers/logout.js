@@ -1,6 +1,11 @@
 const router = require("express").Router();
+const data = require("../Redis/data");
 
-router.get("/logout", (req, res) => {
+router.get("/logout", async(req, res) => {
+  var client = data.key[0];
+  await client.flushall("ASYNC", () => {
+    console.log("Redis DB cleared");
+  });
   const response = {
     status: "ok",
   };
