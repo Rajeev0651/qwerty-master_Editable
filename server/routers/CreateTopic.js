@@ -82,12 +82,19 @@ router.post("/home/CreateTopic", async (req, res) => {
         user.find({ userId: UserId }, async (err, document) => {
           if (document.length != 0) {
             contentid = await addDocument(document, req.body);
-            console.log(ids,"Content ID");
-            userid = decoded.payload.id
-            username = decoded.payload.name
+            console.log(contentid, "Content ID");
+            userid = decoded.payload.id;
+            username = decoded.payload.name;
             var today = new Date();
-            var time = today.getHours() + ":" + today.getMinutes(); 
-            crud.RedisAddContent(contentid,userid,username,time,"Space",userid);
+            var time = today.getHours() + ":" + today.getMinutes();
+            crud.RedisAddContent(
+              contentid,
+              userid,
+              username,
+              time,
+              "Space",
+              userid
+            );
             const response = {
               status: "ok",
               message: "Content Created",

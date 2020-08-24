@@ -21,7 +21,7 @@ const ChatBoxPageRequest = require("./routers/ChatBox");
 const redisID = require("./Redis/data");
 const clientdata = require("./routers/ClientData");
 const Redis = require("./Redis/initializeRedis");
-const ContentResponse = require("./routers/ContentResponse")
+const ContentResponse = require("./routers/ContentResponse");
 
 dotenv.config();
 const uri = process.env.ATLAS_URI;
@@ -31,20 +31,26 @@ const options = {
   cert: fs.readFileSync("../SSL/certificate.pem"),
 };
 
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-});
-const connection = mongoose.connection;
-connection.on("error", console.error.bind(console, "connection error:"));
-connection.once("open", () => {
-  console.log("connection established");
-});
+async function DatabaseConnection() {
+  await mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  });
+  const connection = mongoose.connection;
+  connection.on("error", console.error.bind(console, "connection error:"));
+  connection.once("open", () => {
+    console.log("connection established");
+  });
+}
+function RedisConnection() {
+  var client = Redis.RedisClient();
+  redisID.insert(client);
+}
+DatabaseConnection();
+RedisConnection();
 
-var client = Redis.RedisClient();
-redisID.insert(client);
 app.use(clientdata);
 app.use(homeRoute);
 app.use(loginRoute);
@@ -53,7 +59,6 @@ app.use(logoutRoute);
 app.use(FeedRequest);
 app.use(ChatBoxPageRequest);
 app.use(ContentResponse);
-
 app.use(CreateTopic);
 //app.use(CreateSocket);
 const PORT = process.env.PORT || 5000;

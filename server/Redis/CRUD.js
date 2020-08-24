@@ -12,6 +12,7 @@ async function RedisAddContent(
 ) {
   /***** Variables */
   var client = data.key[0];
+  console.log(client);
   redisJson.use(client);
   let Content_Data_Obj = {
     admin_id: AdminId,
@@ -27,8 +28,9 @@ async function RedisAddContent(
   };
   /***** Set */
   await redisJson
-    .set(ContentID, Content_Data_Obj)
-    .then(() => {
+    .set(ContentID + "_contentid", Content_Data_Obj)
+    .then(async () => {
+      await client.zadd("ClientIdLists", 0, ContentID);
       console.log("Redis Content created for :", ContentID);
     })
     .catch((err) => {
@@ -36,7 +38,7 @@ async function RedisAddContent(
     });
   /***** Get */
   await redisJson
-    .getJSON(ContentID)
+    .getJSON(ContentID + "_contentid")
     .then((Content_data) => {
       console.log("Redis Content Data : ", Content_data);
     })
@@ -46,6 +48,14 @@ async function RedisAddContent(
   RedisAddMessage(false, ContentID, AdminId, AdminName, "Welcome", CreatedAt);
   RedisAddUsers(false, ContentID, AdminId, AdminName);
 }
+/****************************** Content Lists ****************************** */
+async function ContentLists(contentid) {
+  var client = data.key[0];
+  client.smembers("ClientLists", function (err, reply) {
+    console.log(reply);
+  });
+}
+
 /****************************** Adding each Message on a Content_Messages Field ********************* */
 async function RedisAddMessage(
   update,
@@ -243,10 +253,14 @@ async function RedisContentUpdate(ContentID, Hits, Likes, Shares) {
   /***** Set */
   if (Likes == 1) {
     await redisJson
-      .getValueByJsonKey(ContentID, "no_of_likes")
+      .getValueByJsonKey(ContentID + "_contentid", "no_of_likes")
       .then((data) => {
         redisJson
-          .modifyValueByJsonKey(ContentID, "no_of_likes", data + 1)
+          .modifyValueByJsonKey(
+            ContentID + "_contentid",
+            "no_of_likes",
+            data + 1
+          )
           .catch((err) => {
             console.log("246", err); //error when modifing error
           });
@@ -255,20 +269,25 @@ async function RedisContentUpdate(ContentID, Hits, Likes, Shares) {
         console.log("255", err);
       });
     await redisJson
-      .getValueByJsonKey(ContentID, "no_of_likes")
+      .getValueByJsonKey(ContentID + "_contentid", "no_of_likes")
       .then((data) => {
         console.log(data);
       })
       .catch((err) => {
         console.log("263", err);
       });
+    await client.zincrby("ClientIdListed", 1, ContentID);
   }
   if (Hits == 1) {
     await redisJson
-      .getValueByJsonKey(ContentID, "no_of_hits")
+      .getValueByJsonKey(ContentID + "_contentid", "no_of_hits")
       .then((data) => {
         redisJson
-          .modifyValueByJsonKey(ContentID, "no_of_hits", data + 1)
+          .modifyValueByJsonKey(
+            ContentID + "_contentid",
+            "no_of_hits",
+            data + 1
+          )
           .catch((err) => {
             console.log("273", err); //error when modifing error
           });
@@ -277,7 +296,7 @@ async function RedisContentUpdate(ContentID, Hits, Likes, Shares) {
         console.log("277", err);
       });
     await redisJson
-      .getValueByJsonKey(ContentID, "no_of_hits")
+      .getValueByJsonKey(ContentID + "_contentid", "no_of_hits")
       .then((data) => {
         console.log(data);
       })

@@ -112,6 +112,22 @@ function ChatBox(props) {
         SetValid(false);
       }
       if (data.status === "ok" && location.state !== undefined) {
+        let NAME = location.state.Name;
+        let ROOM = location.state.Room;
+        let ID = location.state.UserId;
+        console.log("Socket : ", NAME, ROOM, ID);
+        socket = socketIOClient.connect(ENDPOINT);
+        socket.emit("Join", { Name: NAME, Room: ROOM, UserId: ID }, (err) => {
+          if (err) {
+            alert(err);
+          }
+        });
+        socket.on("message", ({ Name, Room, message, currenttime }) => {
+          setMessages((messages) => [...messages, message]);
+          setSenders((senders) => [...senders, Name]);
+          setTime((time) => [...time, currenttime]);
+          console.log(currenttime);
+        });
         SetName(location.state.Name);
         SetRoom(location.state.Room);
         SetUserId(location.state.UserId);
@@ -120,24 +136,6 @@ function ChatBox(props) {
       }
     })();
   }, []);
-
-  useEffect(() => {
-    if (name !== "" && room !== "" && userid !== "") {
-      console.log("Socket : ", name, room, userid);
-      socket = socketIOClient.connect(ENDPOINT);
-      socket.emit("Join", { Name: name, Room: room, UserId: userid }, (err) => {
-        if (err) {
-          alert(err);
-        }
-      });
-      socket.on("message", ({ Name, Room, message, currenttime }) => {
-        setMessages((messages) => [...messages, message]);
-        setSenders((senders) => [...senders, Name]);
-        setTime((time) => [...time, currenttime]);
-        console.log(currenttime);
-      });
-    }
-  }, [userid]);
 
   return (
     <React.Fragment>
