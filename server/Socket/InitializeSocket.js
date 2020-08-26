@@ -7,12 +7,15 @@ function SocketInitialize(io) {
 
   iochatroom.on("connect", (socket) => {
     console.log("Connected...", socket.id);
+    let ClientRoom
     /*Room Join request */
     socket.on("Join", ({ Name, Room, UserId }) => {
       console.log(Room, Name);
+      ClientRoom = Room
       redis.RedisAddUsers(true, Room ,UserId, Name);
       redis.RedisContentUpdate(Room, 1, 0, 0)
       socket.join(Room);
+      redis.RedisSetContentEngagement(Room)
       console.log("User " + Name + " added to: " + Room);
     });
     /*Client Message */
@@ -24,9 +27,9 @@ function SocketInitialize(io) {
         .emit("message", { Name, Room, message, currenttime: time });
     });
     /*Client Disconnect */
-    socket.on("disconnect", (socket) => {
-      
-      console.log("Disconnect...", socket);
+    socket.on("disconnect", () => {
+      console.log("Disconnect...", socket.id +" "+ ClientRoom)
+      redis.RedisRemoveContentEngagement(ClientRoom)
     });
   });
 }

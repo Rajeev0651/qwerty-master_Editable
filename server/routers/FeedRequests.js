@@ -32,7 +32,7 @@ router.get("/feedrequest", async (req, res) => {
         //   parseInt(lowerbound) // Lower bound
         // );
         contentdata = await operation.LikesAlgorithm(
-          parseInt(lowerbound)+2, //Upper bound
+          parseInt(lowerbound) + 2, //Upper bound
           parseInt(lowerbound) // Lower bound
         );
         console.log(contentdata, "feedreq");

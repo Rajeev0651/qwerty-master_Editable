@@ -23,6 +23,7 @@ const clientdata = require("./routers/ClientData");
 const Redis = require("./Redis/initializeRedis");
 const ContentResponse = require("./routers/ContentResponse");
 const redisContentUpdate = require("./Redis/CRUD");
+const trending = require("./routers/Trending")
 
 dotenv.config();
 const uri = process.env.ATLAS_URI;
@@ -61,6 +62,7 @@ app.use(homeRoute);
 app.use(loginRoute);
 app.use(signupRoute);
 app.use(logoutRoute);
+app.use(trending);
 app.use(FeedRequest);
 app.use(ChatBoxPageRequest);
 app.use(ContentResponse);

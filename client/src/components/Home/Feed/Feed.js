@@ -13,6 +13,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Avatar from "@material-ui/core/Avatar";
+import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import { red } from "@material-ui/core/colors";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -52,6 +53,9 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
+  card:{
+    width : "100%"
+  }
 }));
 
 function Feed() {
@@ -59,8 +63,10 @@ function Feed() {
   const [route, setRoute] = useState(false);
   const [connected, SetConnected] = useState(false);
   const [lb, setLower] = useState(1);
-  const [postID, setPostID] = useState([1]);
-  const [roomID, setRoomID] = useState([1]);
+  const [ContentHeading, setContentHeading] = useState([]);
+  const [ContentDescription, setContentDescription] = useState([]);
+  const [CreatedAt, setCreatedAt] = useState([]);
+  const [roomID, setRoomID] = useState([]);
   const [user, setUser] = useState("");
   const [userID, setUserId] = useState("");
   const [room, setRoom] = useState("");
@@ -94,7 +100,18 @@ function Feed() {
         var len = data.length;
         if (len > 0) {
           for (let i = 0; i < len; i++) {
-            setPostID((postID) => [...postID, data[i].content[0].heading]);
+            setContentHeading((ContentHeading) => [
+              ...ContentHeading,
+              data[i].content[0].heading,
+            ]);
+            setContentDescription((ContentDescription) => [
+              ...ContentDescription,
+              data[i].content[0].description,
+            ]);
+            setCreatedAt((CreatedAt) => [
+              ...CreatedAt,
+              data[i].content[0].createdAt,
+            ]);
             setRoomID((roomID) => [...roomID, data[i].contentId]);
           }
           if (len >= 1) console.log(data[0].content[0].heading);
@@ -118,10 +135,9 @@ function Feed() {
         withCredentials: true,
         data: {
           likes: true,
-          contentid: roomID[i]
-        }
+          contentid: roomID[i],
+        },
       });
-      const data = await response.data;
     })();
   };
 
@@ -136,7 +152,22 @@ function Feed() {
       .then((data) => {
         var len = data.length;
         for (let i = 0; i < len; i++) {
-          setPostID((postID) => [...postID, data[i].content[0].heading]);
+          setContentHeading((ContentHeading) => [
+            ...ContentHeading,
+            data[i].content[0].heading,
+          ]);
+          setContentHeading((ContentHeading) => [
+            ...ContentHeading,
+            data[i].content[0].heading,
+          ]);
+          setContentDescription((ContentDescription) => [
+            ...ContentDescription,
+            data[i].content[0].description,
+          ]);
+          setCreatedAt((CreatedAt) => [
+            ...CreatedAt,
+            data[i].content[0].createdAt,
+          ]);
           setRoomID((roomID) => [...roomID, data[i].contentId]);
         }
         setLower(lb + len);
@@ -146,7 +177,8 @@ function Feed() {
     <React.Fragment>
       {route === true ? (
         <Redirect
-          push to={{
+          push
+          to={{
             pathname: "home/chat",
             state: { Name: user, Room: room, UserId: userID },
           }}
@@ -157,7 +189,7 @@ function Feed() {
             <Grid
               container
               direction="row"
-              justify="center"
+              justify="space-evenly"
               alignItems="flex-start"
             >
               <Grid
@@ -172,9 +204,7 @@ function Feed() {
                 container
                 spacing={1}
               >
-                <Paper className={classes.paper}>
-                  <Trending />
-                </Paper>
+                <Trending />
               </Grid>
               <Grid
                 item
@@ -184,55 +214,52 @@ function Feed() {
                 md={3}
                 lg={0}
                 xl={6}
-                container
-                spacing={1}
               >
                 <InfiniteScroll
-                  dataLength={postID.length}
+                  dataLength={ContentHeading.length}
                   next={fetchMoreData}
                   hasMore={true}
                   loader={<h4>Loading...</h4>}
                 >
-                  {postID.map((i, index) => (
-                    <Paper className={classes.paper}>
-                      <Card>
-                        <CardHeader
-                          avatar={
-                            <Avatar
-                              aria-label="recipe"
-                              className={classes.avatar}
-                            >
-                              R
-                            </Avatar>
-                          }
-                          action={
-                            <IconButton aria-label="settings">
-                              <MoreVertIcon />
-                            </IconButton>
-                          }
-                          title={i}
-                          subheader="September 14, 2016"
-                        />
-                        <CardMedia
-                          className={classes.media}
-                          image={Image}
-                          title="Image"
-                        />
-                        <CardContent>
-                          <ButtonGroup
-                            size="large"
-                            color="primary"
-                            aria-label="large outlined primary button group"
+                  {ContentHeading.map((i, index) => (
+                    <Card className="card">
+                      <CardHeader
+                        avatar={
+                          <Avatar
+                            aria-label="recipe"
+                            className={classes.avatar}
                           >
-                            <Button onClick={() => likes(index)}>Like</Button>
-                            <Button onClick={() => handleClick(index)}>
-                              Join
-                            </Button>
-                            <Button>Share</Button>
-                          </ButtonGroup>
-                        </CardContent>
-                      </Card>
-                    </Paper>
+                            R
+                          </Avatar>
+                        }
+                        action={
+                          <IconButton aria-label="settings">
+                            <MoreVertIcon />
+                          </IconButton>
+                        }
+                        title={i}
+                        subheader="Time"
+                      />
+                      <Typography>{ContentDescription[index]}</Typography>
+                      <CardMedia
+                        className={classes.media}
+                        image={Image}
+                        title="Image"
+                      />
+                      <CardContent>
+                        <ButtonGroup
+                          size="large"
+                          color="primary"
+                          aria-label="large outlined primary button group"
+                        >
+                          <Button onClick={() => likes(index)}>Like</Button>
+                          <Button onClick={() => handleClick(index)}>
+                            Join
+                          </Button>
+                          <Button>Share</Button>
+                        </ButtonGroup>
+                      </CardContent>
+                    </Card>
                   ))}
                 </InfiniteScroll>
               </Grid>
@@ -245,12 +272,9 @@ function Feed() {
                 lg={3}
                 xl={3}
                 className="advertisementShrink"
-                container
-                spacing={1}
+                
               >
-                <Paper className={classes.paper}>
-                  <RightBar />
-                </Paper>
+                <RightBar />
               </Grid>
             </Grid>
           </Container>

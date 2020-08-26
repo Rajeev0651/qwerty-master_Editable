@@ -323,6 +323,34 @@ function RedisContentIdSend(ub, lb) {
     }
   });
 }
+async function RedisSetContentEngagement(ContentId) {
+  /***** Variable */
+  var client = data.key[0];
+  client.zincrby("CurrentContentViewers", 1, ContentId);
+}
+async function RedisRemoveContentEngagement(ContentId) {
+  /***** Variable */
+  var client = await data.key[0];
+  client.zincrby("CurrentContentViewers", -1, ContentId);
+}
+async function RedisGetTopContentEngagement() {
+  /***** Variable */
+  var client = data.key[0];
+  return new Promise((resolve) => {
+    client.zrevrange(
+      "CurrentContentViewers",
+      0,
+      5,
+      "withscores",
+      (err, CurrentContentViewers) => {
+        if (err) console.log("345", err);
+        console.log("Trending : ", CurrentContentViewers);
+        resolve(CurrentContentViewers);
+      }
+    );
+  });
+}
+
 module.exports = {
   RedisAddContent,
   RedisAddMessage,
@@ -332,5 +360,8 @@ module.exports = {
   RedisContentUpdate,
   RedisContentTimer,
   RedisContentIdSend,
+  RedisSetContentEngagement,
+  RedisRemoveContentEngagement,
+  RedisGetTopContentEngagement,
   RedisFlush,
 };
