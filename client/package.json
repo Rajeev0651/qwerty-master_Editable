@@ -16,7 +16,7 @@
     "react-chat-widget": "^3.0.5",
     "react-dom": "^16.13.1",
     "react-emoji": "^0.5.0",
-    "react-infinite-scroll-component": "^5.0.5",
+    "react-infinite-scroll-component": "^5.1.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
     "react-scroll-to-bottom": "^3.0.0",

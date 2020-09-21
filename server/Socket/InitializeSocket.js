@@ -4,7 +4,6 @@ dotenv.config();
 
 function SocketInitialize(io) {
   var iochatroom = io.of("/chatroom");
-
   iochatroom.on("connect", (socket) => {
     console.log("Connected...", socket.id);
     let ClientRoom
